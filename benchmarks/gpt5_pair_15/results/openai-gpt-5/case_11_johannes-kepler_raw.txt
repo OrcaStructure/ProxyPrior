@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "By the time Johannes was born, the Kepler family fortune had already begun to recover.",
+  "confidence": 0.74,
+  "explanation": "Historical accounts and the Wikipedia article state that by the time Johannes Kepler was born, the Kepler family's fortunes had declined and their financial situation was precarious. His father was a mercenary and the family was poor. The sentence reverses this by claiming the fortunes had begun to recover."
+}

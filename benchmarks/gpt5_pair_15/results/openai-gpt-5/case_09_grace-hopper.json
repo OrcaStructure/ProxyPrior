@@ -1,0 +1,15 @@
+{
+  "case_id": "case_09_grace-hopper",
+  "title": "Grace Hopper",
+  "model": "openai/gpt-5",
+  "success": false,
+  "similarity_score": 0.04878048780487805,
+  "model_confidence": 0.84,
+  "ground_truth_corrupted_sentence": "Her parents, Walter Fletcher Murray and Mary Campbell Van Horne, were of Scottish and Danish descent, and attended West End Collegiate Church.",
+  "guessed_corrupted_sentence": "Before joining the Navy, Hopper earned a Ph.D. in both mathematics and mathematical physics from Yale University and was a professor of mathematics at Vassar College.",
+  "parsed_response": {
+    "corrupted_sentence": "Before joining the Navy, Hopper earned a Ph.D. in both mathematics and mathematical physics from Yale University and was a professor of mathematics at Vassar College.",
+    "confidence": 0.84,
+    "explanation": "Grace Hopper earned a single Ph.D. in mathematics from Yale University in 1934, not dual Ph.D.s in mathematics and mathematical physics. The article later correctly states she earned a Ph.D. in mathematics, confirming this inconsistency."
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "benchmark_id": "gpt5_pair_15",
+  "num_cases": 15,
+  "models": {
+    "openai/gpt-5-mini": {
+      "model": "openai/gpt-5-mini",
+      "completed_cases": 15,
+      "success_count": 4,
+      "accuracy": 0.26666666666666666,
+      "avg_similarity_score": 0.30466498326867963
+    },
+    "openai/gpt-5": {
+      "model": "openai/gpt-5",
+      "completed_cases": 15,
+      "success_count": 7,
+      "accuracy": 0.4666666666666667,
+      "avg_similarity_score": 0.5076397017999233
+    }
+  }
+}

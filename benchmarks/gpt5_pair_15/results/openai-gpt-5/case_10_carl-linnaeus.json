@@ -1,0 +1,15 @@
+{
+  "case_id": "case_10_carl-linnaeus",
+  "title": "Carl Linnaeus",
+  "model": "openai/gpt-5",
+  "success": false,
+  "similarity_score": 0.08,
+  "model_confidence": 0.82,
+  "ground_truth_corrupted_sentence": "Even in his early years, Linnaeus seemed to have a liking for plants, herbs in particular.",
+  "guessed_corrupted_sentence": "Linnaeus is designated as the type specimen for the human species, Homo sapiens.",
+  "parsed_response": {
+    "corrupted_sentence": "Linnaeus is designated as the type specimen for the human species, Homo sapiens.",
+    "confidence": 0.82,
+    "explanation": "This is a common misconception. While Homo sapiens Linnaeus, 1758 is the type species of the genus Homo, no person\u2014certainly not Linnaeus himself\u2014has been designated as the name-bearing type (holotype/lectotype/neotype) for the species. The ICZN does not recognize a living individual as a valid type specimen, and no ruling designates Linnaeus as such. Linnaeus described the species without a holotype, and later nomenclatural actions have not made him the type specimen."
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "Other scientists had previously identified periodicity of elements according to atomic number.",
+  "confidence": 0.93,
+  "explanation": "Before Moseley's work in 1913, the concept of atomic number was not used to classify elements. Nineteenth‑century periodicity (by de Chancourtois, Newlands, Meyer, and Mendeleev) was based on atomic weight (relative atomic mass) and chemical properties/valence, not atomic number."
+}

@@ -1,0 +1,15 @@
+{
+  "case_id": "case_13_niels-bohr",
+  "title": "Niels Bohr",
+  "model": "openai/gpt-5",
+  "success": false,
+  "similarity_score": 0.1111111111111111,
+  "model_confidence": 0.83,
+  "ground_truth_corrupted_sentence": "The notion of complementarity dominated Bohr's thinking in both science and politics.",
+  "guessed_corrupted_sentence": "Bohr founded the Institute of Theoretical Physics at the University of Copenhagen, now known as the Niels Bohr Institute, which opened in 1920.",
+  "parsed_response": {
+    "corrupted_sentence": "Bohr founded the Institute of Theoretical Physics at the University of Copenhagen, now known as the Niels Bohr Institute, which opened in 1920.",
+    "confidence": 0.83,
+    "explanation": "The Niels Bohr Institute (then the Institute of Theoretical Physics) was officially opened in 1921, not 1920. The Wikipedia article states 1921 for its opening/founding."
+  }
+}

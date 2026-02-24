@@ -1,0 +1,15 @@
+{
+  "case_id": "case_08_dmitri-mendeleev",
+  "title": "Dmitri Mendeleev",
+  "model": "openai/gpt-5",
+  "success": true,
+  "similarity_score": 1.0,
+  "model_confidence": 0.93,
+  "ground_truth_corrupted_sentence": "Other scientists had previously identified periodicity of elements according to atomic number.",
+  "guessed_corrupted_sentence": "Other scientists had previously identified periodicity of elements according to atomic number.",
+  "parsed_response": {
+    "corrupted_sentence": "Other scientists had previously identified periodicity of elements according to atomic number.",
+    "confidence": 0.93,
+    "explanation": "Before Moseley's work in 1913, the concept of atomic number was not used to classify elements. Nineteenth\u2011century periodicity (by de Chancourtois, Newlands, Meyer, and Mendeleev) was based on atomic weight (relative atomic mass) and chemical properties/valence, not atomic number."
+  }
+}

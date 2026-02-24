@@ -1,0 +1,15 @@
+{
+  "case_id": "case_12_barbara-mcclintock",
+  "title": "Barbara McClintock",
+  "model": "openai/gpt-5",
+  "success": true,
+  "similarity_score": 1.0,
+  "model_confidence": 0.84,
+  "ground_truth_corrupted_sentence": "She was recognized as among the best in the field, awarded prestigious fellowships, and elected a member of the National Academy of Sciences in 1954.",
+  "guessed_corrupted_sentence": "She was recognized as among the best in the field, awarded prestigious fellowships, and elected a member of the National Academy of Sciences in 1954.",
+  "parsed_response": {
+    "corrupted_sentence": "She was recognized as among the best in the field, awarded prestigious fellowships, and elected a member of the National Academy of Sciences in 1954.",
+    "confidence": 0.84,
+    "explanation": "Barbara McClintock was elected to the U.S. National Academy of Sciences in 1944, not 1954. This is well documented in biographies and the NAS membership records, as well as the Wikipedia article. Other seemingly debatable lines (e.g., about her producing the first genetic map for maize) match the standard account in her Wikipedia lead, but the NAS election year here is incorrect."
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "Bohr founded the Institute of Theoretical Physics at the University of Copenhagen, now known as the Niels Bohr Institute, which opened in 1920.",
+  "confidence": 0.83,
+  "explanation": "The Niels Bohr Institute (then the Institute of Theoretical Physics) was officially opened in 1921, not 1920. The Wikipedia article states 1921 for its opening/founding."
+}

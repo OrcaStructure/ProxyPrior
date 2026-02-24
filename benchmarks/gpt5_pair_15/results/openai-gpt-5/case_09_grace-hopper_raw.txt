@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "Before joining the Navy, Hopper earned a Ph.D. in both mathematics and mathematical physics from Yale University and was a professor of mathematics at Vassar College.",
+  "confidence": 0.84,
+  "explanation": "Grace Hopper earned a single Ph.D. in mathematics from Yale University in 1934, not dual Ph.D.s in mathematics and mathematical physics. The article later correctly states she earned a Ph.D. in mathematics, confirming this inconsistency."
+}

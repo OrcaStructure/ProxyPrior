@@ -1,0 +1,15 @@
+{
+  "case_id": "case_15_katherine-johnson",
+  "title": "Katherine Johnson",
+  "model": "openai/gpt-5",
+  "success": true,
+  "similarity_score": 1.0,
+  "model_confidence": 0.73,
+  "ground_truth_corrupted_sentence": "The space agency noted her \"historical role as one of the first African-American women to work as a NASA engineer\".",
+  "guessed_corrupted_sentence": "The space agency noted her \"historical role as one of the first African-American women to work as a NASA engineer\".",
+  "parsed_response": {
+    "corrupted_sentence": "The space agency noted her \"historical role as one of the first African-American women to work as a NASA engineer\".",
+    "confidence": 0.73,
+    "explanation": "Katherine Johnson was a mathematician (often called a \"human computer\"), not an engineer. NASA highlights her as a pioneering mathematician/scientist. The milestone of becoming NASA\u2019s first African-American female engineer belongs to Mary W. Jackson. Thus labeling Johnson as an engineer in this context is incorrect and conflates her achievements with Jackson\u2019s."
+  }
+}

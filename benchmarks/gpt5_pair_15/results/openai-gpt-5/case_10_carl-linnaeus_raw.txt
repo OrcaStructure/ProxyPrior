@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "Linnaeus is designated as the type specimen for the human species, Homo sapiens.",
+  "confidence": 0.82,
+  "explanation": "This is a common misconception. While Homo sapiens Linnaeus, 1758 is the type species of the genus Homo, no person—certainly not Linnaeus himself—has been designated as the name-bearing type (holotype/lectotype/neotype) for the species. The ICZN does not recognize a living individual as a valid type specimen, and no ruling designates Linnaeus as such. Linnaeus described the species without a holotype, and later nomenclatural actions have not made him the type specimen."
+}

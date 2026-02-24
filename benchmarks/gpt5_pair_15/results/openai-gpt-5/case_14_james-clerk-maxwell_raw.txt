@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "He was the first to understand chaos, and the first to emphasize the butterfly effect.",
+  "confidence": 0.9,
+  "explanation": "This credits Maxwell with insights that belong to later developments. Foundational work on chaos theory is largely attributed to Henri Poincaré (late 19th century) and was formalized in the 20th century, while the 'butterfly effect' was articulated by Edward Lorenz in the 1960s–1970s. Maxwell did not pioneer or emphasize these concepts."
+}
