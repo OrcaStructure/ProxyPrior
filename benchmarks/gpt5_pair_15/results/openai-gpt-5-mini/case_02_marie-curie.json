@@ -1,0 +1,15 @@
+{
+  "case_id": "case_02_marie-curie",
+  "title": "Marie Curie",
+  "model": "openai/gpt-5-mini",
+  "success": true,
+  "similarity_score": 1.0,
+  "model_confidence": 0.93,
+  "ground_truth_corrupted_sentence": "Maria's mother Bronis\u0142awa operated a prestigious Warsaw boarding school for boys; she resigned from the position after Maria was born.",
+  "guessed_corrupted_sentence": "Maria's mother Bronis\u0142awa operated a prestigious Warsaw boarding school for boys; she resigned from the position after Maria was born.",
+  "parsed_response": {
+    "corrupted_sentence": "Maria's mother Bronis\u0142awa operated a prestigious Warsaw boarding school for boys; she resigned from the position after Maria was born.",
+    "confidence": 0.93,
+    "explanation": "Contemporary biographies and primary-source accounts state that Maria's mother, Bronis\u0142awa Sk\u0142odowska, ran a prestigious boarding school for girls in Warsaw, not for boys. The substitution of 'boys' for 'girls' is a plausible but incorrect change to the original fact."
+  }
+}

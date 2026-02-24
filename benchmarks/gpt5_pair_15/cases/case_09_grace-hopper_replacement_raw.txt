@@ -1,0 +1,4 @@
+{
+  "replacement_sentence": "Her parents, Walter Fletcher Murray and Mary Campbell Van Horne, were of Scottish and Danish descent, and attended West End Collegiate Church.",
+  "rationale": "I substituted 'Dutch' with 'Danish' to create a small, plausible error: both are Northern European nationalities with similar-sounding names, so the sentence remains the same length and style while introducing a subtle inaccuracy."
+}

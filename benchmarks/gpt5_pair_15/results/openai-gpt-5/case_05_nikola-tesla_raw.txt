@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "In 2013, Time named Tesla one of the 100 most significant figures of all time.",
+  "confidence": 0.83,
+  "explanation": "Time magazine’s 2013 feature 'The 100 Most Significant Figures in History' (based on Skiena & Ward’s analysis) did not include Nikola Tesla. The list featured figures like Jesus, Shakespeare, Lincoln, Einstein, and Edison, but Tesla was not among the top 100. Thus the claim that Time named Tesla one of the 100 most significant figures is incorrect."
+}

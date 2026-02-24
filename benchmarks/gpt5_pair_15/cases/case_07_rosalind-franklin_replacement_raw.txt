@@ -1,0 +1,4 @@
+{
+  "replacement_sentence": "Disappointed by Norrish's lack of enthusiasm, she took up a research position with the British Coal Utilisation Association (BCUA) in 1942.",
+  "rationale": "This alters the organization's name slightly (removing 'Research' and giving a different abbreviation), which is a plausible but incorrect tweak to the original fact while keeping the sentence tone and timeline intact."
+}

@@ -1,0 +1,15 @@
+{
+  "case_id": "case_14_james-clerk-maxwell",
+  "title": "James Clerk Maxwell",
+  "model": "openai/gpt-5-mini",
+  "success": false,
+  "similarity_score": 0.09523809523809523,
+  "model_confidence": 0.99,
+  "ground_truth_corrupted_sentence": "He lodged during term times at the house of his aunt Margaret.",
+  "guessed_corrupted_sentence": "He was the first to understand chaos, and the first to emphasize the butterfly effect.",
+  "parsed_response": {
+    "corrupted_sentence": "He was the first to understand chaos, and the first to emphasize the butterfly effect.",
+    "confidence": 0.99,
+    "explanation": "This sentence is incorrect and anachronistic. Chaos theory and the notion of the 'butterfly effect' are 20th-century developments: the term 'butterfly effect' was coined by Edward Lorenz in 1963, and modern chaos theory was formulated well after Maxwell's death (1879). Earlier seeds of the idea (sensitivity to initial conditions) were identified by Henri Poincar\u00e9 in the late 19th century, not by Maxwell. While Maxwell made important contributions to dynamics and stability (e.g. his work on governors), he did not 'first understand chaos' nor did he introduce or emphasize the butterfly effect."
+  }
+}

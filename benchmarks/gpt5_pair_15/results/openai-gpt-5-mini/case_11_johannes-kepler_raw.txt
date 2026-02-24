@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "His parents were Lutheran, but it is presumed that he was baptized a Catholic, as Protestant baptisms were not permitted in Weil at that time.",
+  "confidence": 0.81,
+  "explanation": "This sentence is incorrect. Johannes Kepler was born to a Lutheran family and was raised Protestant; he later entered the Tübinger Stift, a Lutheran seminary, to train as a Lutheran pastor. Sources indicate Kepler was baptized and brought up in the Protestant (Lutheran) tradition, so the claim that he was presumably baptized a Catholic because Protestant baptisms were not permitted in Weil is not supported by standard biographies and is inconsistent with his later Lutheran education and career."
+}

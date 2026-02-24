@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "At the Langley Memorial Aeronautical Laboratory, based in Hampton, Virginia, near Langley Field, NACA hired African-American mathematicians as well as whites for their Guidance and Navigation Department.",
+  "confidence": 0.92,
+  "explanation": "This sentence is incorrect: NACA hired African-American women (including Katherine Johnson) into the West Area Computers pool at Langley, not directly into the Guidance and Navigation Department. The article itself earlier states she was hired for the West Area computing section; she was later reassigned to the Guidance/Control division. Historical records and NASA accounts consistently describe her initial role as a \"human computer\" in the West Area Computers, so saying NACA hired African-American mathematicians into the Guidance and Navigation Department is a plausible but inaccurate substitution."
+}

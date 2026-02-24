@@ -1,0 +1,43 @@
+[2026-02-23T23:06:17] benchmark_started id=gpt5_pair_15
+[2026-02-23T23:06:17] generating_dataset num_cases=15
+[2026-02-23T23:06:17] building_case case_01_alan-turing
+[2026-02-23T23:06:36] building_case case_02_marie-curie
+[2026-02-23T23:06:48] building_case case_03_isaac-newton
+[2026-02-23T23:07:00] building_case case_04_ada-lovelace
+[2026-02-23T23:07:11] building_case case_05_nikola-tesla
+[2026-02-23T23:07:22] building_case case_06_albert-einstein
+[2026-02-23T23:07:39] building_case case_07_rosalind-franklin
+[2026-02-23T23:07:49] building_case case_08_dmitri-mendeleev
+[2026-02-23T23:07:59] building_case case_09_grace-hopper
+[2026-02-23T23:08:12] building_case case_10_carl-linnaeus
+[2026-02-23T23:08:25] building_case case_11_johannes-kepler
+[2026-02-23T23:08:40] building_case case_12_barbara-mcclintock
+[2026-02-23T23:08:49] building_case case_13_niels-bohr
+[2026-02-23T23:09:07] building_case case_14_james-clerk-maxwell
+[2026-02-23T23:09:19] building_case case_15_katherine-johnson
+[2026-02-23T23:09:32] model_start openai/gpt-5-mini
+[2026-02-23T23:09:32] eval_case openai/gpt-5-mini case_01_alan-turing
+[2026-02-23T23:10:26] eval_case openai/gpt-5-mini case_02_marie-curie
+[2026-02-23T23:11:15] eval_case openai/gpt-5-mini case_03_isaac-newton
+[2026-02-23T23:11:59] eval_case openai/gpt-5-mini case_04_ada-lovelace
+[2026-02-23T23:12:22] eval_case openai/gpt-5-mini case_05_nikola-tesla
+[2026-02-23T23:13:24] eval_case openai/gpt-5-mini case_06_albert-einstein
+[2026-02-23T23:14:12] eval_case openai/gpt-5-mini case_07_rosalind-franklin
+[2026-02-23T23:14:53] eval_case openai/gpt-5-mini case_08_dmitri-mendeleev
+[2026-02-23T23:15:22] eval_case openai/gpt-5-mini case_09_grace-hopper
+[2026-02-23T23:15:32] eval_case openai/gpt-5-mini case_10_carl-linnaeus
+[2026-02-23T23:16:11] eval_case openai/gpt-5-mini case_11_johannes-kepler
+[2026-02-23T23:17:00] eval_case openai/gpt-5-mini case_12_barbara-mcclintock
+[2026-02-23T23:17:29] eval_case openai/gpt-5-mini case_13_niels-bohr
+[2026-02-23T23:18:17] eval_case openai/gpt-5-mini case_14_james-clerk-maxwell
+[2026-02-23T23:18:43] eval_case openai/gpt-5-mini case_15_katherine-johnson
+[2026-02-23T23:19:30] model_done openai/gpt-5-mini accuracy=0.267
+[2026-02-23T23:19:30] model_start openai/gpt-5
+[2026-02-23T23:19:30] eval_case openai/gpt-5 case_01_alan-turing
+[2026-02-23T23:21:06] eval_case openai/gpt-5 case_02_marie-curie
+[2026-02-23T23:21:42] eval_case openai/gpt-5 case_03_isaac-newton
+[2026-02-23T23:23:18] eval_case openai/gpt-5 case_04_ada-lovelace
+[2026-02-23T23:24:45] eval_case openai/gpt-5 case_05_nikola-tesla
+[2026-02-23T23:26:44] eval_case openai/gpt-5 case_06_albert-einstein
+[2026-02-23T23:27:57] eval_case openai/gpt-5 case_07_rosalind-franklin
+[2026-02-23T23:29:11] eval_case openai/gpt-5 case_08_dmitri-mendeleev

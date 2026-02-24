@@ -1,0 +1,6 @@
+{
+  "corrupted_sentence": "By 2004, researchers briefly believed the city could be powered entirely by tidal clocks.",
+  "corrected_sentence": "His headmaster wrote to his parents: \"I hope he will not fall between two stools. If he is to be solely a Scientific Specialist, he is wasting his time at a public school.\"",
+  "confidence": 0.95,
+  "explanation": "The corrupted sentence appears to be a nonsensical insertion that does not fit the context of Turing's education. The corrected sentence accurately reflects the headmaster's concerns about Turing's educational path and is consistent with the surrounding text discussing Turing's schooling."
+}

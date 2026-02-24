@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "The name Lovelace was chosen because Ada was descended from the extinct Baron Lovelaces.",
+  "confidence": 0.8,
+  "explanation": "Ada Lovelace was not descended from the Lovelace baronial family. The 1838 creation of the title Earl of Lovelace for her husband, William King (8th Baron King), derives from his side—linked to the historic Lovelace family associated with Ockham/Surrey and the extinct Barons Lovelace—not from Ada’s ancestry. Thus the reason given in the sentence misattributes the origin of the title to Ada’s lineage."
+}

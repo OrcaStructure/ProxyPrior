@@ -1,0 +1,15 @@
+{
+  "case_id": "case_01_alan-turing",
+  "title": "Alan Turing",
+  "model": "openai/gpt-5-mini",
+  "success": true,
+  "similarity_score": 1.0,
+  "model_confidence": 0.93,
+  "ground_truth_corrupted_sentence": "Turing is widely considered to be the father of computer engineering.",
+  "guessed_corrupted_sentence": "Turing is widely considered to be the father of computer engineering.",
+  "parsed_response": {
+    "corrupted_sentence": "Turing is widely considered to be the father of computer engineering.",
+    "confidence": 0.93,
+    "explanation": "This sentence is incorrect in context. Reliable biographies and the Wikipedia lead describe Turing as a founding figure of theoretical computer science and artificial intelligence (often phrased as \u201cthe father of theoretical computer science and artificial intelligence\u201d or \u201cthe father of computer science\u201d), not specifically \u201cthe father of computer engineering.\u201d \"Computer engineering\" typically refers to hardware/electrical engineering aspects, whereas Turing\u2019s seminal contributions (the Turing machine, Entscheidungsproblem work, and conceptual foundations of computation and AI) are in theoretical computer science and computing theory. The phrasing here appears to be a plausible but incorrect substitution for the standard wording."
+  }
+}

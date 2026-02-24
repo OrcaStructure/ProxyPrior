@@ -1,0 +1,12 @@
+{
+  "messages": [
+    {
+      "role": "system",
+      "content": "You rewrite one sentence from a Wikipedia article to be subtly wrong. It should be just a bit out of place, plausible, and close to believable. Keep roughly the same length and style as the original. Do not make it absurd or obviously fake. Return STRICT JSON with keys: replacement_sentence, rationale."
+    },
+    {
+      "role": "user",
+      "content": "Title: Alan Turing\nPrevious sentence: His headmaster wrote to his parents: \"I hope he will not fall between two stools.\nOriginal sentence: If he is to stay at public school, he must aim at becoming educated.\nNext sentence: If he is to be solely a Scientific Specialist, he is wasting his time at a public school\".\n\nCreate exactly one replacement sentence."
+    }
+  ]
+}

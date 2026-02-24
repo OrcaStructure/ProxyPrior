@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "From there, he was flown to Britain, where he joined the British Tube Alloys nuclear weapons project, and was part of the British mission to the Manhattan Project.",
+  "confidence": 0.87,
+  "explanation": "This sentence conflates and misstates Bohr's wartime affiliations. After fleeing to Sweden in September 1943 Bohr was indeed flown to Britain and then travelled to the United States, where he visited Los Alamos and consulted with Allied atomic scientists. However, he did not \"join the British Tube Alloys nuclear weapons project\" as a formal member. Tube Alloys was the British atomic research programme that had been merged into the Anglo–American Manhattan Project (via the 1943 Quebec Agreement). Bohr participated as an invited scientific consultant to the Allied effort (he visited Los Alamos and advised on policy and scientific matters) but was not a member of Tube Alloys in the sense implied. A correct formulation would say he was taken to Britain and subsequently consulted with the Anglo‑American atomic project (including visits to the Manhattan Project) rather than stating he joined Tube Alloys."
+}

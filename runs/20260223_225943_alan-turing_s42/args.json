@@ -1,0 +1,16 @@
+{
+  "title": "Alan Turing",
+  "model": "openai/gpt-5-mini",
+  "api_key": null,
+  "replacement": null,
+  "seed": 42,
+  "max_chars": 7000,
+  "replacement_mode": "llm",
+  "replacement_model": null,
+  "replacement_temperature": 0.7,
+  "temperature": 0.0,
+  "dry_run": false,
+  "runs_dir": "runs",
+  "run_id": null,
+  "resume": false
+}

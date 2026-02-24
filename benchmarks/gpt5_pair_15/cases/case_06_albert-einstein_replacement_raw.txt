@@ -1,0 +1,4 @@
+{
+  "replacement_sentence": "In 1894, Hermann and Jakob's company tendered for a contract to install electric lighting in Munich, but without success—they lacked the capital that would have been required to update their technology from alternating current to the more established, direct current alternative.",
+  "rationale": "This sentence subtly reverses the historical technical detail by saying they would have had to switch from alternating to direct current and calling direct current the more established option; historically, they were using direct current and lacked the funds to convert to the more efficient alternating current."
+}

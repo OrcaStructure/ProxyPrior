@@ -1,0 +1,15 @@
+{
+  "case_id": "case_06_albert-einstein",
+  "title": "Albert Einstein",
+  "model": "openai/gpt-5-mini",
+  "success": false,
+  "similarity_score": 0.05454545454545454,
+  "model_confidence": 0.86,
+  "ground_truth_corrupted_sentence": "In 1894, Hermann and Jakob's company tendered for a contract to install electric lighting in Munich, but without success\u2014they lacked the capital that would have been required to update their technology from alternating current to the more established, direct current alternative.",
+  "guessed_corrupted_sentence": "In 1897, at the age of seventeen, he enrolled in the mathematics and physics teaching diploma program at the Swiss federal polytechnic school in Zurich, graduating in 1900.",
+  "parsed_response": {
+    "corrupted_sentence": "In 1897, at the age of seventeen, he enrolled in the mathematics and physics teaching diploma program at the Swiss federal polytechnic school in Zurich, graduating in 1900.",
+    "confidence": 0.86,
+    "explanation": "Einstein actually enrolled at the Swiss Federal Polytechnic (ETH Zurich) in 1896, not 1897. Born 14 March 1879, he entered the Polytechnic in October 1896 at age 17 and graduated in 1900. The year '1897' in the sentence is incorrect."
+  }
+}

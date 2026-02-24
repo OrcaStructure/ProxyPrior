@@ -1,0 +1,15 @@
+{
+  "case_id": "case_05_nikola-tesla",
+  "title": "Nikola Tesla",
+  "model": "openai/gpt-5-mini",
+  "success": false,
+  "similarity_score": 0.05128205128205128,
+  "model_confidence": 0.88,
+  "ground_truth_corrupted_sentence": "In 1861, Tesla attended primary school in Smiljan where he studied German, arithmetic, and Latin.",
+  "guessed_corrupted_sentence": "His AC induction motor and related polyphase AC patents, licensed by Westinghouse Electric in 1888, earned him a considerable amount of money and became the cornerstone of the polyphase system, which Westinghouse marketed.",
+  "parsed_response": {
+    "corrupted_sentence": "His AC induction motor and related polyphase AC patents, licensed by Westinghouse Electric in 1888, earned him a considerable amount of money and became the cornerstone of the polyphase system, which Westinghouse marketed.",
+    "confidence": 0.88,
+    "explanation": "This sentence is misleading/incorrect in asserting Tesla \"earned him a considerable amount of money.\" While Tesla's polyphase AC patents were indeed licensed by George Westinghouse in 1888 and became central to the polyphase system, Tesla did not become richly rewarded by those patents. Financial arrangements were complex: Westinghouse initially licensed the patents and paid some sums, but during the financial strain of the late 1880s/early 1890s Westinghouse negotiated to relieve royalty obligations and Tesla ultimately relinquished his claim to future royalties (and is known to have torn up a royalty contract) to help Westinghouse's company survive. Tesla never enjoyed long-term wealth from those patents and experienced recurring financial difficulties thereafter. The claim that they \"earned him a considerable amount of money\" thus overstates the financial benefit he received."
+  }
+}

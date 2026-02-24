@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "On the day before she was to unveil the structure of tobacco mosaic virus at an international fair in Brussels, Franklin died of ovarian cancer at age 37 in 1958.",
+  "confidence": 0.86,
+  "explanation": "Franklin did die on 16 April 1958, the day before the Brussels World's Fair (Expo 58) opened, but she was not about to 'unveil the structure' of tobacco mosaic virus there. The TMV structure was not fully solved until 1959 by her colleagues (notably Aaron Klug and Donald Caspar) after her death. Expo 58 was a world's fair, not a scientific venue for unveiling a new molecular structure, and Franklin was gravely ill at the time."
+}

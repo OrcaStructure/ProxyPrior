@@ -1,0 +1,15 @@
+{
+  "case_id": "case_12_barbara-mcclintock",
+  "title": "Barbara McClintock",
+  "model": "openai/gpt-5-mini",
+  "success": false,
+  "similarity_score": 0.16326530612244897,
+  "model_confidence": 0.95,
+  "ground_truth_corrupted_sentence": "She was recognized as among the best in the field, awarded prestigious fellowships, and elected a member of the National Academy of Sciences in 1954.",
+  "guessed_corrupted_sentence": "Awards and recognition for her contributions to the field followed, including the Nobel Prize in Physiology or Medicine, awarded to her in 1983 for the discovery of genetic transposition; as of 2025, she remains the only woman who has received an unshared Nobel Prize in that category.",
+  "parsed_response": {
+    "corrupted_sentence": "Awards and recognition for her contributions to the field followed, including the Nobel Prize in Physiology or Medicine, awarded to her in 1983 for the discovery of genetic transposition; as of 2025, she remains the only woman who has received an unshared Nobel Prize in that category.",
+    "confidence": 0.95,
+    "explanation": "This sentence is incorrect because Tu Youyou was awarded the Nobel Prize in Physiology or Medicine in 2015 as the sole (unshared) laureate. Therefore Barbara McClintock is not the only woman to have received an unshared Nobel Prize in that category. (McClintock did receive the 1983 Nobel Prize as stated, but the claim about her being the only woman sole laureate in Physiology or Medicine is false.)"
+  }
+}

@@ -1,0 +1,1 @@
+{"corrupted_sentence":"Turing is widely considered to be the father of computer engineering.","confidence":0.86,"explanation":"In the standard Wikipedia lede, Turing is described as the father of theoretical computer science and artificial intelligence, not of computer engineering. The rest of the passage aligns with well-documented facts from his biography."}

@@ -1,0 +1,15 @@
+{
+  "case_id": "case_11_johannes-kepler",
+  "title": "Johannes Kepler",
+  "model": "openai/gpt-5-mini",
+  "success": false,
+  "similarity_score": 0.05714285714285714,
+  "model_confidence": 0.81,
+  "ground_truth_corrupted_sentence": "By the time Johannes was born, the Kepler family fortune had already begun to recover.",
+  "guessed_corrupted_sentence": "His parents were Lutheran, but it is presumed that he was baptized a Catholic, as Protestant baptisms were not permitted in Weil at that time.",
+  "parsed_response": {
+    "corrupted_sentence": "His parents were Lutheran, but it is presumed that he was baptized a Catholic, as Protestant baptisms were not permitted in Weil at that time.",
+    "confidence": 0.81,
+    "explanation": "This sentence is incorrect. Johannes Kepler was born to a Lutheran family and was raised Protestant; he later entered the T\u00fcbinger Stift, a Lutheran seminary, to train as a Lutheran pastor. Sources indicate Kepler was baptized and brought up in the Protestant (Lutheran) tradition, so the claim that he was presumably baptized a Catholic because Protestant baptisms were not permitted in Weil is not supported by standard biographies and is inconsistent with his later Lutheran education and career."
+  }
+}

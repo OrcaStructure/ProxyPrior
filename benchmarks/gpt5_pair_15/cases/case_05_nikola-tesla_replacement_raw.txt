@@ -1,0 +1,4 @@
+{
+  "replacement_sentence": "In 1861, Tesla attended primary school in Smiljan where he studied German, arithmetic, and Latin.",
+  "rationale": "This sentence replaces the original 'religion' with 'Latin', a subtle alteration that remains plausible for a 19th-century curriculum but is historically incorrect according to the source, which lists religion as one of his subjects."
+}

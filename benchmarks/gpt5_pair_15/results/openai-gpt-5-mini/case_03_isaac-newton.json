@@ -1,0 +1,15 @@
+{
+  "case_id": "case_03_isaac-newton",
+  "title": "Isaac Newton",
+  "model": "openai/gpt-5-mini",
+  "success": false,
+  "similarity_score": 0.08695652173913043,
+  "model_confidence": "0.95",
+  "ground_truth_corrupted_sentence": "In addition to his creation of calculus, Newton's work on mathematics was largely confined to applied problems.",
+  "guessed_corrupted_sentence": "He was also the first to explain the Magnus effect.",
+  "parsed_response": {
+    "corrupted_sentence": "He was also the first to explain the Magnus effect.",
+    "confidence": "0.95",
+    "explanation": "The Magnus effect \u2014 the lateral force on a spinning body moving through a fluid \u2014 is named after Heinrich Gustav Magnus, who reported and described the phenomenon in 1852, well after Newton's lifetime. Newton did not explain this effect; modern explanations rely on later developments in fluid dynamics (viscous flow and boundary-layer theory) that were not available to Newton. Because the sentence attributes a discovery and explanation to Newton that historically belongs to 19th\u2011century scientists, it is the incorrect (substituted) sentence in the article."
+  }
+}

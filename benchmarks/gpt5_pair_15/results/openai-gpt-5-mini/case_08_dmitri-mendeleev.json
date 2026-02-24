@@ -1,0 +1,15 @@
+{
+  "case_id": "case_08_dmitri-mendeleev",
+  "title": "Dmitri Mendeleev",
+  "model": "openai/gpt-5-mini",
+  "success": true,
+  "similarity_score": 1.0,
+  "model_confidence": 0.97,
+  "ground_truth_corrupted_sentence": "Other scientists had previously identified periodicity of elements according to atomic number.",
+  "guessed_corrupted_sentence": "Other scientists had previously identified periodicity of elements according to atomic number.",
+  "parsed_response": {
+    "corrupted_sentence": "Other scientists had previously identified periodicity of elements according to atomic number.",
+    "confidence": 0.97,
+    "explanation": "This statement is incorrect. Periodicity based on atomic number was not recognized until Henry Moseley's work in 1913, which showed that elements are ordered by nuclear charge (atomic number) rather than atomic weight. Earlier workers (Newlands, Lothar Meyer, Mendeleev) identified periodicity according to atomic weight (relative atomic mass) and chemical properties, not atomic number."
+  }
+}

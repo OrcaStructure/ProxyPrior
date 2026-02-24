@@ -1,0 +1,4 @@
+{
+  "replacement_sentence": "Even in his early years, Linnaeus seemed to have a liking for plants, herbs in particular.",
+  "rationale": "I substituted 'flowers' with 'herbs' to introduce a subtle, plausible inaccuracy: it keeps the botanical theme and similar sentence length and tone, but changes the specific plant preference to something slightly off from the original."
+}

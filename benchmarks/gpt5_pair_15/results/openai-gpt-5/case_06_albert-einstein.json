@@ -1,0 +1,15 @@
+{
+  "case_id": "case_06_albert-einstein",
+  "title": "Albert Einstein",
+  "model": "openai/gpt-5",
+  "success": true,
+  "similarity_score": 1.0,
+  "model_confidence": 0.9,
+  "ground_truth_corrupted_sentence": "In 1894, Hermann and Jakob's company tendered for a contract to install electric lighting in Munich, but without success\u2014they lacked the capital that would have been required to update their technology from alternating current to the more established, direct current alternative.",
+  "guessed_corrupted_sentence": "In 1894, Hermann and Jakob's company tendered for a contract to install electric lighting in Munich, but without success\u2014they lacked the capital that would have been required to update their technology from alternating current to the more established, direct current alternative.",
+  "parsed_response": {
+    "corrupted_sentence": "In 1894, Hermann and Jakob's company tendered for a contract to install electric lighting in Munich, but without success\u2014they lacked the capital that would have been required to update their technology from alternating current to the more established, direct current alternative.",
+    "confidence": 0.9,
+    "explanation": "The sentence reverses the historical AC/DC context. In the 1890s, alternating current (AC) was the emerging standard for municipal power systems, while the Einsteins' firm had been oriented toward direct current (DC). They lost out because they could not invest to transition from DC to AC\u2014not from AC to the 'more established' DC. The claim is also internally inconsistent with the earlier note that their company made DC equipment."
+  }
+}

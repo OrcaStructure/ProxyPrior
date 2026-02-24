@@ -1,0 +1,15 @@
+{
+  "case_id": "case_07_rosalind-franklin",
+  "title": "Rosalind Franklin",
+  "model": "openai/gpt-5-mini",
+  "success": true,
+  "similarity_score": 0.7142857142857143,
+  "model_confidence": 0.88,
+  "ground_truth_corrupted_sentence": "Disappointed by Norrish's lack of enthusiasm, she took up a research position with the British Coal Utilisation Association (BCUA) in 1942.",
+  "guessed_corrupted_sentence": "She took up a research position with the British Coal Utilisation Association (BCUA) in 1942.",
+  "parsed_response": {
+    "corrupted_sentence": "She took up a research position with the British Coal Utilisation Association (BCUA) in 1942.",
+    "confidence": 0.88,
+    "explanation": "The organisation Franklin joined in 1942 is commonly and correctly named the British Coal Utilisation Research Association (abbreviated BCURA), not the \"British Coal Utilisation Association (BCUA)\" as stated. Major biographies and reference sources (including the standard Wikipedia article and contemporary accounts) refer to BCURA/\u2018British Coal Utilisation Research Association\u2019 as the employer where she did her coal research that led to her PhD."
+  }
+}

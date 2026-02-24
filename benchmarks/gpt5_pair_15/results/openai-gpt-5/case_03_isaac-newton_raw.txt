@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "He originated prisms as beam expanders and multiple-prism arrays, which would later become integral to the development of tunable lasers.",
+  "confidence": 0.86,
+  "explanation": "Newton performed seminal prism experiments and developed a theory of color, but the concepts of prism beam expanders, multiple-prism arrays, and their role in tunable lasers are 20th‑century laser optics developments. Attributing the origin of these specific laser-related techniques to Newton is anachronistic and not supported by historical accounts or standard references on his work."
+}

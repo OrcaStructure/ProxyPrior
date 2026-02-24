@@ -1,0 +1,15 @@
+{
+  "case_id": "case_03_isaac-newton",
+  "title": "Isaac Newton",
+  "model": "openai/gpt-5",
+  "success": false,
+  "similarity_score": 0.058823529411764705,
+  "model_confidence": 0.86,
+  "ground_truth_corrupted_sentence": "In addition to his creation of calculus, Newton's work on mathematics was largely confined to applied problems.",
+  "guessed_corrupted_sentence": "He originated prisms as beam expanders and multiple-prism arrays, which would later become integral to the development of tunable lasers.",
+  "parsed_response": {
+    "corrupted_sentence": "He originated prisms as beam expanders and multiple-prism arrays, which would later become integral to the development of tunable lasers.",
+    "confidence": 0.86,
+    "explanation": "Newton performed seminal prism experiments and developed a theory of color, but the concepts of prism beam expanders, multiple-prism arrays, and their role in tunable lasers are 20th\u2011century laser optics developments. Attributing the origin of these specific laser-related techniques to Newton is anachronistic and not supported by historical accounts or standard references on his work."
+  }
+}

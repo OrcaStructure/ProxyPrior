@@ -1,0 +1,21 @@
+[2026-02-23T22:52:59] run_started
+[2026-02-23T22:52:59] run_id=turing_eval_01
+[2026-02-23T22:52:59] stage=INIT
+[2026-02-23T22:52:59] fetching_wikipedia title=Alan Turing
+[2026-02-23T22:53:01] stage=CASE_BUILT
+[2026-02-23T22:53:01] stage=PROMPT_BUILT
+[2026-02-23T22:53:01] calling_openrouter model=openai/gpt-4o-mini
+[2026-02-23T22:53:06] stage=MODEL_CALLED
+[2026-02-23T22:53:06] stage=EVALUATED
+[2026-02-23T22:53:06] stage=DONE
+[2026-02-23T22:53:06] run_finished
+[2026-02-23T22:55:33] run_started
+[2026-02-23T22:55:33] run_id=turing_eval_01
+[2026-02-23T22:55:33] resuming_from_stage=DONE
+[2026-02-23T22:55:33] loaded_test_case_from_disk
+[2026-02-23T22:55:33] loaded_model_output_from_disk
+[2026-02-23T22:55:57] run_started
+[2026-02-23T22:55:57] run_id=turing_eval_01
+[2026-02-23T22:55:57] resuming_from_stage=DONE
+[2026-02-23T22:55:57] loaded_test_case_from_disk
+[2026-02-23T22:55:57] loaded_model_output_from_disk

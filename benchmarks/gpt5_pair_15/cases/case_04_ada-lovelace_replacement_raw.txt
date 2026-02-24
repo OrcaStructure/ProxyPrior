@@ -1,0 +1,4 @@
+{
+  "replacement_sentence": "Although often ill in childhood, Lovelace pursued her studies intermittently.",
+  "rationale": "This keeps the original sentence's structure and length but changes one word—'assiduously' to 'intermittently'—creating a subtle factual distortion. It plausibly links childhood illness to sporadic study, yet it contradicts the historical record that she pursued her education diligently."
+}

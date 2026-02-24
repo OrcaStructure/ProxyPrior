@@ -1,0 +1,15 @@
+{
+  "case_id": "case_05_nikola-tesla",
+  "title": "Nikola Tesla",
+  "model": "openai/gpt-5",
+  "success": false,
+  "similarity_score": 0.08,
+  "model_confidence": 0.83,
+  "ground_truth_corrupted_sentence": "In 1861, Tesla attended primary school in Smiljan where he studied German, arithmetic, and Latin.",
+  "guessed_corrupted_sentence": "In 2013, Time named Tesla one of the 100 most significant figures of all time.",
+  "parsed_response": {
+    "corrupted_sentence": "In 2013, Time named Tesla one of the 100 most significant figures of all time.",
+    "confidence": 0.83,
+    "explanation": "Time magazine\u2019s 2013 feature 'The 100 Most Significant Figures in History' (based on Skiena & Ward\u2019s analysis) did not include Nikola Tesla. The list featured figures like Jesus, Shakespeare, Lincoln, Einstein, and Edison, but Tesla was not among the top 100. Thus the claim that Time named Tesla one of the 100 most significant figures is incorrect."
+  }
+}

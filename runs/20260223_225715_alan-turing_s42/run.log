@@ -1,0 +1,11 @@
+[2026-02-23T22:57:15] run_started
+[2026-02-23T22:57:15] run_id=20260223_225715_alan-turing_s42
+[2026-02-23T22:57:15] stage=INIT
+[2026-02-23T22:57:15] fetching_wikipedia title=Alan Turing
+[2026-02-23T22:57:17] stage=CASE_BUILT
+[2026-02-23T22:57:17] stage=PROMPT_BUILT
+[2026-02-23T22:57:17] calling_openrouter model=openai/gpt-5-mini
+[2026-02-23T22:57:46] stage=MODEL_CALLED
+[2026-02-23T22:57:46] stage=EVALUATED
+[2026-02-23T22:57:46] stage=DONE
+[2026-02-23T22:57:46] run_finished

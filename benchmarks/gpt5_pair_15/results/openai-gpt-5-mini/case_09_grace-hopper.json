@@ -1,0 +1,15 @@
+{
+  "case_id": "case_09_grace-hopper",
+  "title": "Grace Hopper",
+  "model": "openai/gpt-5-mini",
+  "success": false,
+  "similarity_score": 0.04878048780487805,
+  "model_confidence": 0.95,
+  "ground_truth_corrupted_sentence": "Her parents, Walter Fletcher Murray and Mary Campbell Van Horne, were of Scottish and Danish descent, and attended West End Collegiate Church.",
+  "guessed_corrupted_sentence": "Before joining the Navy, Hopper earned a Ph.D. in both mathematics and mathematical physics from Yale University and was a professor of mathematics at Vassar College.",
+  "parsed_response": {
+    "corrupted_sentence": "Before joining the Navy, Hopper earned a Ph.D. in both mathematics and mathematical physics from Yale University and was a professor of mathematics at Vassar College.",
+    "confidence": 0.95,
+    "explanation": "This sentence is incorrect about the doctorate. Grace Hopper earned a Ph.D. in mathematics from Yale in 1934 (her dissertation, \u201cNew Types of Irreducibility Criteria,\u201d was supervised by \u00d8ystein Ore). She did not earn a separate Ph.D. in mathematical physics. The article itself later correctly states she earned a Ph.D. in mathematics under \u00d8ystein Ore, so the claim of a dual Ph.D. is the substituted inaccuracy."
+  }
+}

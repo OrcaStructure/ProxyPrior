@@ -1,0 +1,41 @@
+{
+  "num_cases": 15,
+  "titles": [
+    "Alan Turing",
+    "Marie Curie",
+    "Isaac Newton",
+    "Ada Lovelace",
+    "Nikola Tesla",
+    "Albert Einstein",
+    "Rosalind Franklin",
+    "Dmitri Mendeleev",
+    "Grace Hopper",
+    "Carl Linnaeus",
+    "Johannes Kepler",
+    "Barbara McClintock",
+    "Niels Bohr",
+    "James Clerk Maxwell",
+    "Katherine Johnson"
+  ],
+  "case_paths": [
+    "benchmarks/gpt5_pair_15/cases/case_01_alan-turing.json",
+    "benchmarks/gpt5_pair_15/cases/case_02_marie-curie.json",
+    "benchmarks/gpt5_pair_15/cases/case_03_isaac-newton.json",
+    "benchmarks/gpt5_pair_15/cases/case_04_ada-lovelace.json",
+    "benchmarks/gpt5_pair_15/cases/case_05_nikola-tesla.json",
+    "benchmarks/gpt5_pair_15/cases/case_06_albert-einstein.json",
+    "benchmarks/gpt5_pair_15/cases/case_07_rosalind-franklin.json",
+    "benchmarks/gpt5_pair_15/cases/case_08_dmitri-mendeleev.json",
+    "benchmarks/gpt5_pair_15/cases/case_09_grace-hopper.json",
+    "benchmarks/gpt5_pair_15/cases/case_10_carl-linnaeus.json",
+    "benchmarks/gpt5_pair_15/cases/case_11_johannes-kepler.json",
+    "benchmarks/gpt5_pair_15/cases/case_12_barbara-mcclintock.json",
+    "benchmarks/gpt5_pair_15/cases/case_13_niels-bohr.json",
+    "benchmarks/gpt5_pair_15/cases/case_14_james-clerk-maxwell.json",
+    "benchmarks/gpt5_pair_15/cases/case_15_katherine-johnson.json"
+  ],
+  "seed": 42,
+  "max_chars": 7000,
+  "replacement_model": "openai/gpt-5-mini",
+  "replacement_temperature": 0.7
+}

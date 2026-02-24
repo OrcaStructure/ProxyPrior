@@ -1,0 +1,5 @@
+{
+  "corrupted_sentence": "Maria's mother Bronisława operated a prestigious Warsaw boarding school for boys; she resigned from the position after Maria was born.",
+  "confidence": 0.86,
+  "explanation": "Bronisława Skłodowska ran a prestigious boarding school for girls, not boys. Reliable biographies and the Wikipedia page state she oversaw a girls' school in Warsaw and left the position after Maria’s birth."
+}

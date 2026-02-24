@@ -1,0 +1,15 @@
+{
+  "case_id": "case_04_ada-lovelace",
+  "title": "Ada Lovelace",
+  "model": "openai/gpt-5",
+  "success": false,
+  "similarity_score": 0.047619047619047616,
+  "model_confidence": 0.8,
+  "ground_truth_corrupted_sentence": "Although often ill in childhood, Lovelace pursued her studies intermittently.",
+  "guessed_corrupted_sentence": "The name Lovelace was chosen because Ada was descended from the extinct Baron Lovelaces.",
+  "parsed_response": {
+    "corrupted_sentence": "The name Lovelace was chosen because Ada was descended from the extinct Baron Lovelaces.",
+    "confidence": 0.8,
+    "explanation": "Ada Lovelace was not descended from the Lovelace baronial family. The 1838 creation of the title Earl of Lovelace for her husband, William King (8th Baron King), derives from his side\u2014linked to the historic Lovelace family associated with Ockham/Surrey and the extinct Barons Lovelace\u2014not from Ada\u2019s ancestry. Thus the reason given in the sentence misattributes the origin of the title to Ada\u2019s lineage."
+  }
+}

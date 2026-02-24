@@ -1,0 +1,15 @@
+{
+  "case_id": "case_10_carl-linnaeus",
+  "title": "Carl Linnaeus",
+  "model": "openai/gpt-5-mini",
+  "success": false,
+  "similarity_score": 0.08,
+  "model_confidence": 0.94,
+  "ground_truth_corrupted_sentence": "Even in his early years, Linnaeus seemed to have a liking for plants, herbs in particular.",
+  "guessed_corrupted_sentence": "Linnaeus is designated as the type specimen for the human species, Homo sapiens.",
+  "parsed_response": {
+    "corrupted_sentence": "Linnaeus is designated as the type specimen for the human species, Homo sapiens.",
+    "confidence": 0.94,
+    "explanation": "This statement confuses authorship with typification. Carl Linnaeus is the author (authority) who named Homo sapiens (Homo sapiens Linnaeus, 1758), but he was not \"designated as the type specimen\" of the species. A type specimen is a physical specimen (or an illustration) used to define the application of a scientific name; Linnaeus himself was not fixed as the type specimen for H. sapiens. The correct point is that Linnaeus is the authority who described and named the species, not that he is its type specimen."
+  }
+}

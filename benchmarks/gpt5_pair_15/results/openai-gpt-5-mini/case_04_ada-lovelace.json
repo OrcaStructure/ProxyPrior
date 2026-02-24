@@ -1,0 +1,15 @@
+{
+  "case_id": "case_04_ada-lovelace",
+  "title": "Ada Lovelace",
+  "model": "openai/gpt-5-mini",
+  "success": false,
+  "similarity_score": 0.043478260869565216,
+  "model_confidence": 0.93,
+  "ground_truth_corrupted_sentence": "Although often ill in childhood, Lovelace pursued her studies intermittently.",
+  "guessed_corrupted_sentence": "She decided to write a book, Flyology, illustrating, with plates, some of her findings.",
+  "parsed_response": {
+    "corrupted_sentence": "She decided to write a book, Flyology, illustrating, with plates, some of her findings.",
+    "confidence": 0.93,
+    "explanation": "There is no historical evidence that Ada Lovelace planned or wrote a book titled 'Flyology'. While anecdotal accounts note a childhood interest in flight and experiments with wings, the specific claim that she decided to write a book called 'Flyology' (with illustrative plates) is not supported by reliable biographies or primary sources. The rest of the surrounding paragraph extrapolates from genuine childhood curiosity, but this sentence appears to be a plausible-sounding fabrication inserted into the article."
+  }
+}

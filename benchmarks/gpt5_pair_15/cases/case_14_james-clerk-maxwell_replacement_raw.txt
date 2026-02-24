@@ -1,0 +1,1 @@
+{"replacement_sentence":"He lodged during term times at the house of his aunt Margaret.","rationale":"I changed the aunt's given name from Isabella to Margaret — a small, plausible misidentification that preserves the original sentence's structure and meaning while introducing a subtle factual error about a family member."}
