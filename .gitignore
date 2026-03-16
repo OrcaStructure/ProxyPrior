@@ -1,1 +1,5 @@
 .env
+news_runs
+math_trace_runs
+dataset_runs
+runs

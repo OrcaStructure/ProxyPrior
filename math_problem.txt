@@ -1,0 +1,1 @@
+721. Let $a, b, c$ be real numbers such that $a b+b c+c a=3$ and $$ \frac{a^3+b^3+c^3}{3}=(a-1)(b-1)(c-1)+1 . $$ Find all possible values of $a+b+c$.

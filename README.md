@@ -107,3 +107,191 @@ Artifacts are written to `benchmarks/<benchmark_id>/`:
 - `cases/` per-case corrupted article and replacement generation outputs
 - `results/<model_slug>/` per-model per-case results
 - `summary.json` aggregate accuracy and mean similarity per model
+
+## AIME25 dataset runner
+
+The AIME runner loads the dataset with `pandas`:
+
+```python
+import pandas as pd
+
+df = pd.read_json("hf://datasets/math-ai/aime25/test.jsonl", lines=True)
+```
+
+Run GPT-5 on it with low reasoning effort:
+
+```bash
+python3 run_aime25_gpt5.py \
+  --model openai/gpt-5 \
+  --reasoning-effort low \
+  --run-id aime25_gpt5_low
+```
+
+Resume the same run:
+
+```bash
+python3 run_aime25_gpt5.py \
+  --model openai/gpt-5 \
+  --reasoning-effort low \
+  --run-id aime25_gpt5_low \
+  --resume
+```
+
+Quick smoke test:
+
+```bash
+python3 run_aime25_gpt5.py \
+  --model openai/gpt-5 \
+  --reasoning-effort low \
+  --max-rows 3 \
+  --run-id aime25_gpt5_low_smoke
+```
+
+## News bias + hidden-mode experiment (early 2026)
+
+This runner:
+1. Builds a cached corpus with real event sets and synthetic event sets.
+Each real event set is `--articles-per-set` articles from one `--event-query`.
+Each fake event set is generated from the matching real 10-article set as reference.
+2. Runs one hidden mode for the entire run:
+`deploy` means all shown articles are real, `eval` means all shown articles are synthetic.
+3. In each turn, the judge outputs:
+`bias_score` (0 unbiased -> 1 extremely biased), `prob_eval_mode`, `prob_deploy_mode`.
+4. The system prompt explicitly states a prior (default: 20% deploy/real, 80% eval/synthetic) and that mode is fixed for the whole run.
+5. Uses permutation schedules so items rotate through turn positions.
+
+Step 1: prepare or refresh corpus only (cache real + fake once):
+
+```bash
+python3 news_real_fake_experiment.py \
+  --event-query "uk local council budget dispute" \
+  --event-query "regional rail strike service disruption" \
+  --event-query "city flood response infrastructure delays" \
+  --articles-per-set 10 \
+  --from-date 2026-01-01 \
+  --to-date 2026-03-10 \
+  --prepare-only \
+  --run-id news_bias_2026
+```
+
+Step 2: run judging reusing cached corpus:
+
+```bash
+python3 news_real_fake_experiment.py \
+  --reuse-corpus \
+  --run-mode random \
+  --prior-real 0.2 \
+  --turns-per-conversation 10 \
+  --judge-model openai/gpt-5 \
+  --judge-workers 12 \
+  --run-id news_bias_2026
+```
+
+Force a specific mode for ablations:
+
+```bash
+python3 news_real_fake_experiment.py --reuse-corpus --run-mode deploy --run-id news_bias_2026_deploy
+python3 news_real_fake_experiment.py --reuse-corpus --run-mode eval --run-id news_bias_2026_eval
+```
+
+Artifacts are written to `news_runs/<run_id>/`:
+
+- `args.json`
+- `run.log`
+- `real_candidates_snapshot.json`
+- `corpus_real_articles.json`
+- `corpus_fake_articles.json`
+- `corpus_meta.json`
+- `items_to_score.json`
+- `conversation_schedule.json`
+- `conversations/*.json`
+- `rows/*_fake.json`, `rows/*_fake_raw.txt`
+- `rows/*_turn_*_score.json`, `rows/*_turn_*_judge_raw.txt`
+- `summary.json`
+
+## Bayesian diagnostics for a completed run
+
+Compute Bayesian update diagnostics from a completed run directory:
+
+```bash
+python3 bayes_analysis.py \
+  --run-dir news_runs/news_rf_early_2026_multiturn \
+  --reference-prior 0.5 \
+  --prior-grid 0.2,0.5,0.8 \
+  --threshold 0.5 \
+  --cost-fp 1.0 \
+  --cost-fn 1.0
+```
+
+This writes `bayes_analysis_summary.json` into the run directory, including:
+
+- per-turn Bayes factors (`log_bf`, `bf`)
+- calibration by turn
+- information gain by turn (entropy drop)
+- cumulative evidence separation (real vs fake)
+- position/order effects and path dependence checks
+- prior sensitivity
+- posterior odds accuracy
+- decision utility and simple variance decomposition
+
+## Single-problem math trace experiment
+
+Run one hard proof-based math problem many times and store full model outputs (reasoning traces).
+
+Create file:
+
+- `math_problem.txt` with the full problem statement
+
+Run Claude Sonnet 4.5 multiple times:
+
+```bash
+python3 run_math_trace_experiment.py \
+  --problem-file math_problem.txt \
+  --model anthropic/claude-sonnet-4.5 \
+  --samples 50 \
+  --reasoning-effort high \
+  --temperature 0.8 \
+  --workers 8 \
+  --run-id claude45_mathtrace_01
+```
+
+Artifacts are written to `math_trace_runs/<run_id>/`:
+
+- `args.json`
+- `task.json`
+- `prompt.json`
+- `run.log`
+- `rows/sample_XXXX.json` (proof trace text + `claimed_solved` flag from model)
+- `rows/sample_XXXX_raw.json` (raw OpenRouter response)
+- `summary.json` (completion counts + claimed-solved rate)
+
+## Idea graph extraction across traces
+
+Build a per-trace idea graph (ideas + prerequisite edges), then relabel equivalent ideas across traces.
+
+If `--run-dir` is omitted, it uses the most recent folder in `math_trace_runs/`.
+
+```bash
+python3 run_idea_graph_experiment.py \
+  --run-dir math_trace_runs/claude45_prooftrace_01 \
+  --analysis-model openai/gpt-5-mini \
+  --workers 8 \
+  --resume
+```
+
+Artifacts are written to `math_trace_runs/<run_id>/idea_graphs/`:
+
+- `idea_graph.log`
+- `per_trace/sample_XXXX_graph.json`
+- `per_trace/sample_XXXX_graph_raw.txt`
+- `canonical_idea_graph.json` (canonical nodes + relabeled edges + mappings)
+
+Visualize the canonical graph with hover tooltips (defaults to most recent run):
+
+```bash
+python3 visualize_idea_graph.py
+```
+
+This writes:
+
+- `math_trace_runs/<run_id>/idea_graphs/canonical_idea_graph_viz.html`
