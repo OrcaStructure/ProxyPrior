@@ -16,6 +16,7 @@ from typing import Any
 
 from dotenv import load_dotenv
 
+from openrouter_credits import start_credit_tracking
 from wiki_substitution_test import (
     build_prompt,
     build_replacement_prompt,
@@ -287,6 +288,10 @@ def main() -> int:
     benchmark_dir.mkdir(parents=True, exist_ok=True)
     append_log(log_path, f"benchmark_started id={benchmark_id}")
     json_write(benchmark_dir / "args.json", vars(args))
+    start_credit_tracking(
+        api_key=api_key,
+        log_fn=lambda msg: append_log(log_path, msg),
+    )
 
     try:
         if args.resume and (benchmark_dir / "dataset_manifest.json").exists():

@@ -17,6 +17,8 @@ from typing import Any
 
 from dotenv import load_dotenv
 
+from openrouter_credits import start_credit_tracking
+
 OPENROUTER_API = "https://openrouter.ai/api/v1/chat/completions"
 
 
@@ -264,6 +266,10 @@ def main() -> int:
     traces_out_dir.mkdir(parents=True, exist_ok=True)
     log_path = out_dir / "idea_graph.log"
     append_log(log_path, f"start run_dir={run_dir}")
+    start_credit_tracking(
+        api_key=api_key,
+        log_fn=lambda msg: append_log(log_path, msg),
+    )
 
     trace_paths = sorted([p for p in rows_dir.glob("sample_*.json") if not p.stem.endswith("_raw")])
     if args.max_traces is not None:

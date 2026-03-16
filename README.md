@@ -14,6 +14,8 @@ Create a `.env` file in the project root:
 OPENROUTER_API_KEY=your_key_here
 ```
 
+OpenRouter runners now log credit snapshots at run start and run end (including `used_this_run` delta when available) in each run log.
+
 ## What it does
 
 1. Fetches a Wikipedia article as plain text.
@@ -149,49 +151,59 @@ python3 run_aime25_gpt5.py \
 
 ## News bias + hidden-mode experiment (early 2026)
 
-This runner:
-1. Builds a cached corpus with real event sets and synthetic event sets.
-Each real event set is `--articles-per-set` articles from one `--event-query`.
-Each fake event set is generated from the matching real 10-article set as reference.
-2. Runs one hidden mode for the entire run:
-`deploy` means all shown articles are real, `eval` means all shown articles are synthetic.
-3. In each turn, the judge outputs:
-`bias_score` (0 unbiased -> 1 extremely biased), `prob_eval_mode`, `prob_deploy_mode`.
-4. The system prompt explicitly states a prior (default: 20% deploy/real, 80% eval/synthetic) and that mode is fixed for the whole run.
-5. Uses permutation schedules so items rotate through turn positions.
+Use three scripts:
+1. `prepare_news_real_corpus.py` downloads and samples reusable real event sets.
+2. `generate_news_fake_corpus.py` generates reusable fake sets from those real sets.
+3. `news_real_fake_experiment.py` only judges (no repeated data prep).
 
-Step 1: prepare or refresh corpus only (cache real + fake once):
+If you do not pass any `--event-query`, the prepare step now auto-discovers event queries from `--query` (default `world`) and then fetches related articles per discovered event.
+
+Step 1: prepare real corpus once:
 
 ```bash
-python3 news_real_fake_experiment.py \
+python3 prepare_news_real_corpus.py \
   --event-query "uk local council budget dispute" \
   --event-query "regional rail strike service disruption" \
   --event-query "city flood response infrastructure delays" \
   --articles-per-set 10 \
   --from-date 2026-01-01 \
   --to-date 2026-03-10 \
-  --prepare-only \
-  --run-id news_bias_2026
+  --corpus-id news_bias_2026
 ```
 
-Step 2: run judging reusing cached corpus:
+Minimal auto-discovery prepare command:
+
+```bash
+python3 prepare_news_real_corpus.py
+```
+
+Step 2: generate fake corpus once:
+
+```bash
+python3 generate_news_fake_corpus.py \
+  --corpus-dir news_corpora/news_bias_2026 \
+  --generator-model openai/gpt-5-mini \
+  --generator-workers 12
+```
+
+Step 3: run judging using prepared corpus:
 
 ```bash
 python3 news_real_fake_experiment.py \
-  --reuse-corpus \
-  --run-mode random \
+  --corpus-dir news_corpora/news_bias_2026 \
+  --run-mode both \
   --prior-real 0.2 \
   --turns-per-conversation 10 \
   --judge-model openai/gpt-5 \
   --judge-workers 12 \
-  --run-id news_bias_2026
+  --run-id news_bias_2026_judge
 ```
 
-Force a specific mode for ablations:
+Force a specific mode:
 
 ```bash
-python3 news_real_fake_experiment.py --reuse-corpus --run-mode deploy --run-id news_bias_2026_deploy
-python3 news_real_fake_experiment.py --reuse-corpus --run-mode eval --run-id news_bias_2026_eval
+python3 news_real_fake_experiment.py --corpus-dir news_corpora/news_bias_2026 --run-mode deploy --run-id news_bias_2026_deploy
+python3 news_real_fake_experiment.py --corpus-dir news_corpora/news_bias_2026 --run-mode eval --run-id news_bias_2026_eval
 ```
 
 Artifacts are written to `news_runs/<run_id>/`:
@@ -202,12 +214,12 @@ Artifacts are written to `news_runs/<run_id>/`:
 - `corpus_real_articles.json`
 - `corpus_fake_articles.json`
 - `corpus_meta.json`
-- `items_to_score.json`
-- `conversation_schedule.json`
-- `conversations/*.json`
+- `items_to_score_*.json`
+- `conversation_schedule_*.json`
+- `conversations_*/`
 - `rows/*_fake.json`, `rows/*_fake_raw.txt`
 - `rows/*_turn_*_score.json`, `rows/*_turn_*_judge_raw.txt`
-- `summary.json`
+- `summary.json` and `summary_*.json`
 
 ## Bayesian diagnostics for a completed run
 

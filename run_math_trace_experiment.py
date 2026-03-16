@@ -18,6 +18,8 @@ from typing import Any
 
 from dotenv import load_dotenv
 
+from openrouter_credits import start_credit_tracking
+
 OPENROUTER_API = "https://openrouter.ai/api/v1/chat/completions"
 
 
@@ -164,6 +166,10 @@ def main() -> int:
         },
     )
     append_log(log_path, f"run_started id={run_id}")
+    start_credit_tracking(
+        api_key=api_key,
+        log_fn=lambda msg: append_log(log_path, msg),
+    )
 
     messages = build_messages(problem_text)
     json_write(run_dir / "prompt.json", {"messages": messages})

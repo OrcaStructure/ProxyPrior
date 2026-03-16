@@ -30,6 +30,8 @@ from typing import Any
 
 from dotenv import load_dotenv
 
+from openrouter_credits import start_credit_tracking
+
 GUARDIAN_API = "https://content.guardianapis.com/search"
 OPENROUTER_API = "https://openrouter.ai/api/v1/chat/completions"
 
@@ -152,9 +154,9 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--seed", type=int, default=42)
     p.add_argument(
         "--run-mode",
-        choices=["deploy", "eval", "random"],
-        default="random",
-        help="Hidden mode for whole run: deploy=all real, eval=all fake, random picks one by seed",
+        choices=["deploy", "eval", "random", "both"],
+        default="both",
+        help="Mode selection: deploy=all real, eval=all fake, random picks one by seed, both runs deploy+eval separately",
     )
     p.add_argument(
         "--prior-real",
@@ -177,6 +179,11 @@ def parse_args() -> argparse.Namespace:
         "--reuse-corpus",
         action="store_true",
         help="Reuse existing corpus cache files in run dir if present",
+    )
+    p.add_argument(
+        "--corpus-dir",
+        default=None,
+        help="Directory containing corpus_real_articles.json and corpus_fake_articles.json",
     )
     p.add_argument("--runs-dir", default="news_runs", help="Directory for run artifacts")
     p.add_argument("--run-id", default=None, help="Run identifier")
@@ -515,19 +522,20 @@ def main() -> int:
     event_queries = normalize_event_queries(args)
 
     openrouter_api_key = os.environ.get("OPENROUTER_API_KEY")
-    if not args.dry_run and not openrouter_api_key:
-        print("[error] Missing OPENROUTER_API_KEY in environment/.env", file=sys.stderr)
-        return 1
     guardian_api_key = args.guardian_api_key or os.environ.get("GUARDIAN_API_KEY") or "test"
 
-    resolved_mode = args.run_mode
-    if resolved_mode == "random":
-        resolved_mode = random.Random(args.seed).choice(["deploy", "eval"])
+    if args.run_mode == "random":
+        run_modes = [random.Random(args.seed).choice(["deploy", "eval"])]
+    elif args.run_mode == "both":
+        run_modes = ["deploy", "eval"]
+    else:
+        run_modes = [args.run_mode]
 
-    run_id = args.run_id or choose_run_id(args.generator_model, args.judge_model, args.seed, resolved_mode)
+    run_id = args.run_id or choose_run_id(args.generator_model, args.judge_model, args.seed, args.run_mode)
     run_dir = Path(args.runs_dir) / run_id
     rows_dir = run_dir / "rows"
     log_path = run_dir / "run.log"
+    corpus_source_dir = Path(args.corpus_dir) if args.corpus_dir else run_dir
 
     if run_dir.exists() and args.run_id and not args.resume:
         print(f"[error] Run exists at {run_dir}. Use --resume to continue.", file=sys.stderr)
@@ -537,14 +545,50 @@ def main() -> int:
     rows_dir.mkdir(parents=True, exist_ok=True)
     json_write(run_dir / "args.json", vars(args))
     log_event(log_path, f"run_started id={run_id}", f"Run started: {run_id}")
+    start_credit_tracking(
+        api_key=openrouter_api_key,
+        log_fn=lambda msg: append_log(log_path, msg),
+    )
 
-    corpus_real_path = run_dir / "corpus_real_articles.json"
-    corpus_fake_path = run_dir / "corpus_fake_articles.json"
+    corpus_real_path = corpus_source_dir / "corpus_real_articles.json"
+    corpus_fake_path = corpus_source_dir / "corpus_fake_articles.json"
     corpus_meta_path = run_dir / "corpus_meta.json"
+    source_meta_path = corpus_source_dir / "corpus_meta.json"
 
     real_event_sets: list[dict] = []
     fake_event_sets: list[dict] = []
-    if args.reuse_corpus and corpus_real_path.exists() and corpus_fake_path.exists():
+    if args.corpus_dir:
+        if not corpus_real_path.exists() or not corpus_fake_path.exists():
+            print(
+                f"[error] Missing corpus files in {corpus_source_dir}. Expected corpus_real_articles.json and corpus_fake_articles.json.",
+                file=sys.stderr,
+            )
+            return 1
+        real_loaded = json_read(corpus_real_path)
+        fake_loaded = json_read(corpus_fake_path)
+        real_event_sets = real_loaded.get("event_sets", [])
+        fake_event_sets = fake_loaded.get("event_sets", [])
+        if not real_event_sets:
+            legacy_real = real_loaded.get("articles", [])
+            if legacy_real:
+                real_event_sets = [{"set_id": "real_set_000", "event_query": args.query, "articles": legacy_real}]
+        if not fake_event_sets:
+            legacy_fake = fake_loaded.get("articles", [])
+            if legacy_fake:
+                fake_event_sets = [
+                    {
+                        "set_id": "fake_set_000",
+                        "reference_real_set_id": "real_set_000",
+                        "event_query": args.query,
+                        "articles": legacy_fake,
+                    }
+                ]
+        log_event(
+            log_path,
+            f"loaded_corpus_from_external_dir dir={corpus_source_dir}",
+            f"Loaded external corpus: {len(real_event_sets)} real sets, {len(fake_event_sets)} fake sets.",
+        )
+    elif args.reuse_corpus and corpus_real_path.exists() and corpus_fake_path.exists():
         real_loaded = json_read(corpus_real_path)
         fake_loaded = json_read(corpus_fake_path)
         real_event_sets = real_loaded.get("event_sets", [])
@@ -636,6 +680,9 @@ def main() -> int:
         )
 
         if not args.dry_run:
+            if not openrouter_api_key:
+                print("[error] Missing OPENROUTER_API_KEY in environment/.env", file=sys.stderr)
+                return 1
             pending_generation: list[tuple[int, dict, str, Path, Path]] = []
             for set_idx, real_set in enumerate(real_event_sets):
                 row_id = f"fake_set_{set_idx:03d}"
@@ -742,16 +789,24 @@ def main() -> int:
             f"Saved corpus: {len(real_event_sets)} real sets, {len(fake_event_sets)} fake sets.",
         )
 
+    source_meta = json_read(source_meta_path) if source_meta_path.exists() else {}
+    reference_from_date = str(source_meta.get("from_date", args.from_date))
+    reference_to_date = str(source_meta.get("to_date", args.to_date))
+    source_event_queries = source_meta.get("event_queries")
+    if isinstance(source_event_queries, list) and source_event_queries:
+        event_queries = [str(q) for q in source_event_queries]
+
     real_items = flatten_real_items(real_event_sets, args.max_article_chars)
     fake_items = flatten_fake_items(fake_event_sets, args.max_article_chars)
 
     json_write(
         corpus_meta_path,
         {
+            "corpus_source_dir": str(corpus_source_dir),
             "query": args.query,
             "event_queries": event_queries,
-            "from_date": args.from_date,
-            "to_date": args.to_date,
+            "from_date": reference_from_date,
+            "to_date": reference_to_date,
             "articles_per_set": args.articles_per_set,
             "num_real_sets": len(real_event_sets),
             "num_fake_sets": len(fake_event_sets),
@@ -768,193 +823,215 @@ def main() -> int:
         print("Stopped before judging.")
         return 0
 
-    if resolved_mode == "deploy":
-        items_to_score = list(real_items)
-        mode_label = "real"
-    else:
-        items_to_score = list(fake_items)
-        mode_label = "fake"
-
-    if not items_to_score:
-        print("[error] No items available for judging in selected mode. Build corpus first.", file=sys.stderr)
+    if not openrouter_api_key:
+        print("[error] Missing OPENROUTER_API_KEY in environment/.env", file=sys.stderr)
         return 1
 
-    rng.shuffle(items_to_score)
-    json_write(
-        run_dir / "items_to_score.json",
-        {"run_mode": resolved_mode, "mode_label": mode_label, "items": items_to_score},
-    )
+    mode_summaries: dict[str, dict] = {}
 
-    scored_rows: list[dict] = []
-    conversations_dir = run_dir / "conversations"
-    conversations_dir.mkdir(parents=True, exist_ok=True)
+    for run_mode in run_modes:
+        if run_mode == "deploy":
+            items_to_score = list(real_items)
+            mode_label = "real"
+        else:
+            items_to_score = list(fake_items)
+            mode_label = "fake"
 
-    schedules: list[dict] = []
-    mode_rng = random.Random(args.seed + (11 if mode_label == "real" else 29))
-    sequences = build_position_balanced_sequences(items_to_score, mode_rng, args.turns_per_conversation)
-    for seq in sequences:
-        schedules.append(
-            {
-                "conversation_id": f"{mode_label}_conv_{int(seq['conversation_index']):03d}",
-                "label": mode_label,
-                "run_mode": resolved_mode,
-                "item_ids": seq["item_ids"],
-                "position_balanced": seq["position_balanced"],
-            }
+        if not items_to_score:
+            print(f"[error] No items available for mode '{run_mode}'. Build corpus first.", file=sys.stderr)
+            return 1
+
+        local_rng = random.Random(args.seed + (11 if mode_label == "real" else 29))
+        local_rng.shuffle(items_to_score)
+        json_write(
+            run_dir / f"items_to_score_{run_mode}.json",
+            {"run_mode": run_mode, "mode_label": mode_label, "items": items_to_score},
         )
-    json_write(run_dir / "conversation_schedule.json", {"run_mode": resolved_mode, "conversations": schedules})
 
-    item_lookup = {item["item_id"]: item for item in items_to_score}
-    pending_conversations: list[tuple[dict, Path]] = []
-    for convo in schedules:
-        convo_path = conversations_dir / f"{convo['conversation_id']}.json"
-        if args.resume and convo_path.exists():
-            loaded = json_read(convo_path)
-            for turn in loaded.get("turns", []):
-                if "prob_eval_mode" in turn:
-                    scored_rows.append(turn)
-            append_log(log_path, f"skip_existing_conversation {convo['conversation_id']}")
-            continue
-        pending_conversations.append((convo, convo_path))
+        scored_rows: list[dict] = []
+        conversations_dir = run_dir / f"conversations_{run_mode}"
+        conversations_dir.mkdir(parents=True, exist_ok=True)
 
-    def run_conversation(task: tuple[dict, Path]) -> tuple[str, list[dict], list[str], bool]:
-        convo, _ = task
-        conversation_id = convo["conversation_id"]
-        turn_items = [item_lookup[item_id] for item_id in convo["item_ids"]]
-
-        messages: list[dict[str, str]] = [{"role": "system", "content": build_judge_system_prompt(args.prior_real)}]
-        turns: list[dict] = []
-        raws: list[str] = []
-
-        for turn_idx, item in enumerate(turn_items, start=1):
-            user_prompt = build_judge_turn_prompt(
-                article=item,
-                from_date=args.from_date,
-                to_date=args.to_date,
-                turn_index=turn_idx,
-                total_turns=len(turn_items),
+        schedules: list[dict] = []
+        mode_rng = random.Random(args.seed + (111 if mode_label == "real" else 229))
+        sequences = build_position_balanced_sequences(items_to_score, mode_rng, args.turns_per_conversation)
+        for seq in sequences:
+            schedules.append(
+                {
+                    "conversation_id": f"{mode_label}_conv_{int(seq['conversation_index']):03d}",
+                    "label": mode_label,
+                    "run_mode": run_mode,
+                    "item_ids": seq["item_ids"],
+                    "position_balanced": seq["position_balanced"],
+                }
             )
-            messages.append({"role": "user", "content": user_prompt})
-            raw = call_openrouter(
-                api_key=openrouter_api_key or "",
-                model=args.judge_model,
-                messages=messages,
-                temperature=args.judge_temperature,
-                app_title="ProxyPrior News Real/Fake Judge MultiTurn",
-            )
-            parsed = extract_json_object(raw)
-            prob_eval_mode = clamp01(parsed.get("prob_eval_mode", 0.5))
-            prob_deploy_mode = clamp01(parsed.get("prob_deploy_mode", 1.0 - prob_eval_mode))
-            denom = prob_eval_mode + prob_deploy_mode
-            if denom > 0:
-                prob_eval_mode = prob_eval_mode / denom
-                prob_deploy_mode = prob_deploy_mode / denom
-            bias_score = clamp01(parsed.get("bias_score", 0.5))
-            turn_record = {
-                **item,
-                "conversation_id": conversation_id,
-                "conversation_label": convo["label"],
-                "run_mode": convo["run_mode"],
-                "turn_index": turn_idx,
-                "num_turns": len(turn_items),
-                "judge_model": args.judge_model,
-                "bias_score": bias_score,
-                "prob_eval_mode": prob_eval_mode,
-                "prob_deploy_mode": prob_deploy_mode,
-                "rationale": parsed.get("rationale"),
-            }
-            turns.append(turn_record)
-            raws.append(raw)
-            messages.append({"role": "assistant", "content": json.dumps(parsed, ensure_ascii=True)})
-
-        return conversation_id, turns, raws, bool(convo.get("position_balanced"))
-
-    if pending_conversations:
-        log_event(
-            log_path,
-            (
-                f"starting_judging_parallel conversations={len(pending_conversations)} "
-                f"workers={max(1, args.judge_workers)}"
-            ),
-            (
-                f"Starting judge phase: {len(pending_conversations)} conversations "
-                f"x {args.turns_per_conversation} turns, {max(1, args.judge_workers)} workers "
-                f"(mode={resolved_mode}, prior_real={args.prior_real:.2f})"
-            ),
+        json_write(
+            run_dir / f"conversation_schedule_{run_mode}.json",
+            {"run_mode": run_mode, "conversations": schedules},
         )
-        with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, args.judge_workers)) as executor:
-            future_to_task = {
-                executor.submit(run_conversation, task): task for task in pending_conversations
-            }
-            completed_conversations = 0
-            total_conversations = len(future_to_task)
-            for future in concurrent.futures.as_completed(future_to_task):
-                convo, convo_path = future_to_task[future]
-                convo_id = convo["conversation_id"]
-                try:
-                    _, turns, raws, is_balanced = future.result()
-                    for turn in turns:
-                        score_path = rows_dir / f"{turn['conversation_id']}_turn_{int(turn['turn_index']):02d}_score.json"
-                        json_write(score_path, turn)
+
+        item_lookup = {item["item_id"]: item for item in items_to_score}
+        pending_conversations: list[tuple[dict, Path]] = []
+        for convo in schedules:
+            convo_path = conversations_dir / f"{convo['conversation_id']}.json"
+            if args.resume and convo_path.exists():
+                loaded = json_read(convo_path)
+                for turn in loaded.get("turns", []):
+                    if "prob_eval_mode" in turn:
                         scored_rows.append(turn)
-                    for idx, raw in enumerate(raws, start=1):
-                        raw_path = rows_dir / f"{convo_id}_turn_{idx:02d}_judge_raw.txt"
-                        raw_path.write_text(raw, encoding="utf-8")
-                    json_write(
-                        convo_path,
-                        {
-                            "conversation_id": convo_id,
-                            "label": convo["label"],
-                            "item_ids": convo["item_ids"],
-                            "position_balanced": is_balanced,
-                            "turns": turns,
-                        },
-                    )
-                    append_log(log_path, f"scored_conversation {convo_id}")
-                    completed_conversations += 1
-                    print(
-                        f"[{dt.datetime.now().strftime('%H:%M:%S')}] Conversations: "
-                        f"{completed_conversations}/{total_conversations}"
-                    )
-                except Exception as exc:
-                    append_log(log_path, f"conversation_failed {convo_id} {exc}")
-                    append_log(log_path, traceback.format_exc())
-                    json_write(
-                        convo_path,
-                        {
-                            "conversation_id": convo_id,
-                            "label": convo["label"],
-                            "item_ids": convo["item_ids"],
-                            "error": str(exc),
-                        },
-                    )
-                    completed_conversations += 1
-                    print(
-                        f"[{dt.datetime.now().strftime('%H:%M:%S')}] Conversations: "
-                        f"{completed_conversations}/{total_conversations} (1 failed)"
-                    )
+                append_log(log_path, f"skip_existing_conversation mode={run_mode} id={convo['conversation_id']}")
+                continue
+            pending_conversations.append((convo, convo_path))
 
-    summary = {
-        "run_id": run_id,
-        "run_mode": resolved_mode,
-        "prior_real": args.prior_real,
-        "query": args.query,
-        "event_queries": event_queries,
-        "from_date": args.from_date,
-        "to_date": args.to_date,
-        "articles_per_set": args.articles_per_set,
-        "num_real_sets": len(real_event_sets),
-        "num_fake_sets": len(fake_event_sets),
-        "num_selected_real": len(real_items),
-        "num_generated_fake": len(fake_items),
-        "metrics": compute_summary(scored_rows, resolved_mode),
-    }
+        def run_conversation(task: tuple[dict, Path]) -> tuple[str, list[dict], list[str], bool]:
+            convo, _ = task
+            conversation_id = convo["conversation_id"]
+            turn_items = [item_lookup[item_id] for item_id in convo["item_ids"]]
+
+            messages: list[dict[str, str]] = [{"role": "system", "content": build_judge_system_prompt(args.prior_real)}]
+            turns: list[dict] = []
+            raws: list[str] = []
+
+            for turn_idx, item in enumerate(turn_items, start=1):
+                user_prompt = build_judge_turn_prompt(
+                    article=item,
+                    from_date=reference_from_date,
+                    to_date=reference_to_date,
+                    turn_index=turn_idx,
+                    total_turns=len(turn_items),
+                )
+                messages.append({"role": "user", "content": user_prompt})
+                raw = call_openrouter(
+                    api_key=openrouter_api_key or "",
+                    model=args.judge_model,
+                    messages=messages,
+                    temperature=args.judge_temperature,
+                    app_title="ProxyPrior News Real/Fake Judge MultiTurn",
+                )
+                parsed = extract_json_object(raw)
+                prob_eval_mode = clamp01(parsed.get("prob_eval_mode", 0.5))
+                prob_deploy_mode = clamp01(parsed.get("prob_deploy_mode", 1.0 - prob_eval_mode))
+                denom = prob_eval_mode + prob_deploy_mode
+                if denom > 0:
+                    prob_eval_mode = prob_eval_mode / denom
+                    prob_deploy_mode = prob_deploy_mode / denom
+                bias_score = clamp01(parsed.get("bias_score", 0.5))
+                turn_record = {
+                    **item,
+                    "conversation_id": conversation_id,
+                    "conversation_label": convo["label"],
+                    "run_mode": convo["run_mode"],
+                    "turn_index": turn_idx,
+                    "num_turns": len(turn_items),
+                    "judge_model": args.judge_model,
+                    "bias_score": bias_score,
+                    "prob_eval_mode": prob_eval_mode,
+                    "prob_deploy_mode": prob_deploy_mode,
+                    "rationale": parsed.get("rationale"),
+                }
+                turns.append(turn_record)
+                raws.append(raw)
+                messages.append({"role": "assistant", "content": json.dumps(parsed, ensure_ascii=True)})
+
+            return conversation_id, turns, raws, bool(convo.get("position_balanced"))
+
+        if pending_conversations:
+            log_event(
+                log_path,
+                (
+                    f"starting_judging_parallel mode={run_mode} conversations={len(pending_conversations)} "
+                    f"workers={max(1, args.judge_workers)}"
+                ),
+                (
+                    f"Starting judge phase ({run_mode}): {len(pending_conversations)} conversations "
+                    f"x {args.turns_per_conversation} turns, {max(1, args.judge_workers)} workers "
+                    f"(prior_real={args.prior_real:.2f})"
+                ),
+            )
+            with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, args.judge_workers)) as executor:
+                future_to_task = {
+                    executor.submit(run_conversation, task): task for task in pending_conversations
+                }
+                completed_conversations = 0
+                total_conversations = len(future_to_task)
+                for future in concurrent.futures.as_completed(future_to_task):
+                    convo, convo_path = future_to_task[future]
+                    convo_id = convo["conversation_id"]
+                    try:
+                        _, turns, raws, is_balanced = future.result()
+                        for turn in turns:
+                            score_path = rows_dir / f"{turn['conversation_id']}_turn_{int(turn['turn_index']):02d}_score.json"
+                            json_write(score_path, turn)
+                            scored_rows.append(turn)
+                        for idx, raw in enumerate(raws, start=1):
+                            raw_path = rows_dir / f"{convo_id}_turn_{idx:02d}_judge_raw.txt"
+                            raw_path.write_text(raw, encoding="utf-8")
+                        json_write(
+                            convo_path,
+                            {
+                                "conversation_id": convo_id,
+                                "label": convo["label"],
+                                "item_ids": convo["item_ids"],
+                                "position_balanced": is_balanced,
+                                "turns": turns,
+                            },
+                        )
+                        append_log(log_path, f"scored_conversation mode={run_mode} id={convo_id}")
+                        completed_conversations += 1
+                        print(
+                            f"[{dt.datetime.now().strftime('%H:%M:%S')}] {run_mode} conversations: "
+                            f"{completed_conversations}/{total_conversations}"
+                        )
+                    except Exception as exc:
+                        append_log(log_path, f"conversation_failed mode={run_mode} id={convo_id} {exc}")
+                        append_log(log_path, traceback.format_exc())
+                        json_write(
+                            convo_path,
+                            {
+                                "conversation_id": convo_id,
+                                "label": convo["label"],
+                                "item_ids": convo["item_ids"],
+                                "error": str(exc),
+                            },
+                        )
+                        completed_conversations += 1
+                        print(
+                            f"[{dt.datetime.now().strftime('%H:%M:%S')}] {run_mode} conversations: "
+                            f"{completed_conversations}/{total_conversations} (1 failed)"
+                        )
+
+        mode_summary = {
+            "run_id": run_id,
+            "run_mode": run_mode,
+            "prior_real": args.prior_real,
+            "query": args.query,
+            "event_queries": event_queries,
+            "from_date": reference_from_date,
+            "to_date": reference_to_date,
+            "articles_per_set": args.articles_per_set,
+            "num_real_sets": len(real_event_sets),
+            "num_fake_sets": len(fake_event_sets),
+            "num_selected_real": len(real_items),
+            "num_generated_fake": len(fake_items),
+            "metrics": compute_summary(scored_rows, run_mode),
+        }
+        json_write(run_dir / f"summary_{run_mode}.json", mode_summary)
+        mode_summaries[run_mode] = mode_summary
+
+    if len(mode_summaries) == 1:
+        summary = next(iter(mode_summaries.values()))
+    else:
+        summary = {
+            "run_id": run_id,
+            "run_mode": "both",
+            "mode_summaries": mode_summaries,
+        }
     json_write(run_dir / "summary.json", summary)
     log_event(log_path, "run_finished", "Run finished.")
 
     print(f"Run ID: {run_id}")
     print(f"Run directory: {run_dir}")
-    print(json.dumps(summary["metrics"], indent=2, ensure_ascii=True))
+    print(json.dumps(summary, indent=2, ensure_ascii=True))
     return 0
 
 

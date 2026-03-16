@@ -28,6 +28,8 @@ from typing import Optional
 
 from dotenv import load_dotenv
 
+from openrouter_credits import start_credit_tracking
+
 WIKIPEDIA_API = "https://en.wikipedia.org/w/api.php"
 OPENROUTER_API = "https://openrouter.ai/api/v1/chat/completions"
 
@@ -364,6 +366,10 @@ def main() -> int:
     append_log(log_path, "run_started")
     json_write(run_dir / "args.json", vars(args))
     append_log(log_path, f"run_id={run_id}")
+    start_credit_tracking(
+        api_key=api_key,
+        log_fn=lambda msg: append_log(log_path, msg),
+    )
     print(f"Run ID: {run_id}")
     print(f"Run directory: {run_dir}")
 

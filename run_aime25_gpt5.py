@@ -18,6 +18,8 @@ from typing import Any
 import pandas as pd
 from dotenv import load_dotenv
 
+from openrouter_credits import start_credit_tracking
+
 OPENROUTER_API = "https://openrouter.ai/api/v1/chat/completions"
 DEFAULT_DATASET_URI = "hf://datasets/math-ai/aime25/test.jsonl"
 
@@ -183,6 +185,10 @@ def main() -> int:
     rows_dir.mkdir(parents=True, exist_ok=True)
     json_write(run_dir / "args.json", vars(args))
     append_log(log_path, f"run_started id={run_id}")
+    start_credit_tracking(
+        api_key=api_key,
+        log_fn=lambda msg: append_log(log_path, msg),
+    )
 
     try:
         df = load_dataset(args.dataset_uri, args.max_rows)
