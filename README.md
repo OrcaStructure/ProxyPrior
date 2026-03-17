@@ -149,12 +149,20 @@ python3 run_aime25_gpt5.py \
   --run-id aime25_gpt5_low_smoke
 ```
 
-## News bias + hidden-mode experiment (early 2026)
+## News real-vs-fictional hidden-mode experiment (early 2026)
 
 Use three scripts:
 1. `prepare_news_real_corpus.py` downloads and samples reusable real event sets.
 2. `generate_news_fake_corpus.py` generates reusable fake sets from those real sets.
-3. `news_real_fake_experiment.py` only judges (no repeated data prep).
+3. `news_real_fake_experiment.py` only judges event-reality probabilities (no repeated data prep).
+
+Argumentless sequence (runs against latest prepared corpus):
+
+```bash
+python3 prepare_news_real_corpus.py
+python3 generate_news_fake_corpus.py
+python3 news_real_fake_experiment.py
+```
 
 If you do not pass any `--event-query`, the prepare step now auto-discovers event queries from `--query` (default `world`) and then fetches related articles per discovered event.
 
@@ -186,15 +194,17 @@ python3 generate_news_fake_corpus.py \
   --generator-workers 12
 ```
 
+Generation is sequential per fake set: each turn uses 3 sampled real reference articles, the running event summary (`n/10`), and summaries of previously generated fake articles.
+
 Step 3: run judging using prepared corpus:
 
 ```bash
 python3 news_real_fake_experiment.py \
   --corpus-dir news_corpora/news_bias_2026 \
   --run-mode both \
-  --prior-real 0.2 \
+  --prior-real 0.5 \
   --turns-per-conversation 10 \
-  --judge-model openai/gpt-5 \
+  --judge-model openai/gpt-5-mini \
   --judge-workers 12 \
   --run-id news_bias_2026_judge
 ```
@@ -220,6 +230,10 @@ Artifacts are written to `news_runs/<run_id>/`:
 - `rows/*_fake.json`, `rows/*_fake_raw.txt`
 - `rows/*_turn_*_score.json`, `rows/*_turn_*_judge_raw.txt`
 - `summary.json` and `summary_*.json`
+
+Prepare-step discovery logging is written to:
+
+- `news_corpora/<corpus_id>/discovery.log`
 
 ## Bayesian diagnostics for a completed run
 

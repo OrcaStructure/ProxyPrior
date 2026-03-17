@@ -315,7 +315,7 @@ def evaluate(test_case: TestCase, guessed_corrupted_sentence: str) -> tuple[bool
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Run a Wikipedia substitution test against OpenRouter.")
     p.add_argument("--title", required=True, help="Wikipedia article title, e.g. 'Alan Turing'")
-    p.add_argument("--model", required=True, help="OpenRouter model id")
+    p.add_argument("--model", default="openai/gpt-5-mini", help="OpenRouter model id")
     p.add_argument("--api-key", default=None, help="OpenRouter API key. Falls back to OPENROUTER_API_KEY env var")
     p.add_argument("--replacement", default=None, help="Custom strange-but-believable replacement sentence")
     p.add_argument("--seed", type=int, default=42, help="Random seed for sentence selection")

@@ -50,7 +50,7 @@ def append_log(path: Path, message: str) -> None:
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Run repeated proof attempts of one hard math problem.")
     p.add_argument("--problem-file", default="math_problem.txt", help="Path to text file with problem statement")
-    p.add_argument("--model", default="anthropic/claude-sonnet-4.5", help="OpenRouter model id")
+    p.add_argument("--model", default="openai/gpt-5-mini", help="OpenRouter model id")
     p.add_argument("--samples", type=int, default=50, help="How many repeated attempts")
     p.add_argument("--temperature", type=float, default=0.8, help="Sampling temperature")
     p.add_argument(

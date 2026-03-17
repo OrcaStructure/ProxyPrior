@@ -15,9 +15,7 @@ from dotenv import load_dotenv
 
 from openrouter_credits import start_credit_tracking
 from news_real_fake_experiment import (
-    build_fake_set_generation_prompt,
-    call_openrouter,
-    extract_json_object,
+    generate_fake_set_with_progress,
     json_read,
     json_write,
 )
@@ -25,7 +23,8 @@ from news_real_fake_experiment import (
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Generate fake event sets from corpus_real_articles.json.")
-    p.add_argument("--corpus-dir", required=True, help="Directory containing corpus_real_articles.json")
+    p.add_argument("--corpus-dir", default=None, help="Directory containing corpus_real_articles.json")
+    p.add_argument("--corpora-dir", default="news_corpora", help="Parent directory for corpus folders (used when --corpus-dir is omitted)")
     p.add_argument("--generator-model", default="openai/gpt-5-mini", help="OpenRouter model used to generate fake articles")
     p.add_argument("--generator-temperature", type=float, default=0.8)
     p.add_argument("--generator-workers", type=int, default=12, help="Concurrent OpenRouter requests for fake generation")
@@ -50,6 +49,29 @@ def append_log(path: Path, message: str) -> None:
         f.write(f"[{stamp}] {message}\n")
 
 
+def resolve_corpus_dir(corpus_dir_arg: str | None, corpora_dir: str) -> Path:
+    if corpus_dir_arg:
+        return Path(corpus_dir_arg)
+
+    root = Path(corpora_dir)
+    latest_pointer = root / "latest_corpus.txt"
+    if latest_pointer.exists():
+        corpus_id = latest_pointer.read_text(encoding="utf-8").strip()
+        if corpus_id:
+            candidate = root / corpus_id
+            if candidate.exists():
+                return candidate
+
+    dirs = [p for p in root.iterdir() if p.is_dir()] if root.exists() else []
+    if dirs:
+        dirs.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+        return dirs[0]
+
+    raise FileNotFoundError(
+        f"Could not resolve corpus directory. Provide --corpus-dir or create one under {root}."
+    )
+
+
 def main() -> int:
     load_dotenv()
     args = parse_args()
@@ -59,7 +81,11 @@ def main() -> int:
         print("[error] Missing OPENROUTER_API_KEY in environment/.env", file=sys.stderr)
         return 1
 
-    corpus_dir = Path(args.corpus_dir)
+    try:
+        corpus_dir = resolve_corpus_dir(args.corpus_dir, args.corpora_dir)
+    except Exception as exc:
+        print(f"[error] {exc}", file=sys.stderr)
+        return 1
     corpus_real_path = corpus_dir / "corpus_real_articles.json"
     if not corpus_real_path.exists():
         print(f"[error] Missing {corpus_real_path}", file=sys.stderr)
@@ -101,57 +127,18 @@ def main() -> int:
 
     def generate_one_set(task: tuple[int, dict, str, Path, Path]) -> tuple[str, str, dict]:
         _, real_set, row_id, _, _ = task
-        prompt = build_fake_set_generation_prompt(
+        return generate_fake_set_with_progress(
             real_set=real_set,
+            row_id=row_id,
+            api_key=openrouter_api_key,
+            model=args.generator_model,
+            temperature=args.generator_temperature,
             from_date=str(from_date),
             to_date=str(to_date),
             articles_per_set=articles_per_set,
+            max_article_chars=args.max_article_chars,
+            reference_articles_per_set=3,
         )
-        raw = call_openrouter(
-            api_key=openrouter_api_key,
-            model=args.generator_model,
-            messages=prompt,
-            temperature=args.generator_temperature,
-            app_title="ProxyPrior News Real/Fake Set Generator",
-        )
-        parsed = extract_json_object(raw)
-        generated_articles = parsed.get("articles", [])
-        if not isinstance(generated_articles, list):
-            raise ValueError("Generator returned non-list 'articles'.")
-        if len(generated_articles) != articles_per_set:
-            raise ValueError(
-                f"Generator returned {len(generated_articles)} articles; expected {articles_per_set}."
-            )
-
-        normalized_articles: list[dict] = []
-        for article_idx, article in enumerate(generated_articles):
-            if not isinstance(article, dict):
-                raise ValueError(f"Generated article {article_idx} is not a JSON object.")
-            body = str(article.get("body", "")).strip()
-            if not body:
-                raise ValueError(f"Generated article {article_idx} has empty body.")
-            normalized_articles.append(
-                {
-                    "row_id": f"{row_id}_article_{article_idx:02d}",
-                    "source_real_article_id": "",
-                    "headline": str(article.get("headline", "")).strip() or "Untitled fabricated article",
-                    "section_name": str(article.get("section", "")).strip(),
-                    "published_at": str(article.get("publication_date_utc", "")).strip(),
-                    "body_text": body[: args.max_article_chars],
-                    "fake_details": article.get("fake_details"),
-                    "generator_model": args.generator_model,
-                }
-            )
-
-        fake_set = {
-            "set_id": row_id,
-            "reference_real_set_id": real_set.get("set_id"),
-            "event_query": real_set.get("event_query", ""),
-            "fictional_event_title": str(parsed.get("fictional_event_title", "")).strip(),
-            "fictional_event_description": str(parsed.get("fictional_event_description", "")).strip(),
-            "articles": normalized_articles,
-        }
-        return row_id, raw, fake_set
 
     if pending_generation:
         print(

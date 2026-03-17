@@ -51,7 +51,7 @@ def append_log(path: Path, message: str) -> None:
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description="Run GPT-5 on the math-ai/aime25 dataset.")
     p.add_argument("--dataset-uri", default=DEFAULT_DATASET_URI, help="Dataset JSONL URI")
-    p.add_argument("--model", default="openai/gpt-5", help="OpenRouter model id")
+    p.add_argument("--model", default="openai/gpt-5-mini", help="OpenRouter model id")
     p.add_argument(
         "--reasoning-effort",
         choices=["low", "medium", "high"],

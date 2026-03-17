@@ -85,8 +85,8 @@ def parse_args() -> argparse.Namespace:
     p.add_argument(
         "--models",
         nargs="+",
-        required=True,
-        help="OpenRouter model ids, e.g. openai/gpt-5-mini openai/gpt-5",
+        default=["openai/gpt-5-mini"],
+        help="OpenRouter model ids, e.g. openai/gpt-5-mini openai/gpt-5.2",
     )
     p.add_argument(
         "--articles-file",

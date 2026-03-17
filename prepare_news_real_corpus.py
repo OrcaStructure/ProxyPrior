@@ -10,6 +10,7 @@ import random
 import re
 import sys
 from pathlib import Path
+from typing import Callable
 
 from dotenv import load_dotenv
 
@@ -45,6 +46,21 @@ STOPWORDS = {
     "were",
     "with",
 }
+
+HARDCODED_WORLD_DISCOVERY_SEEDS = [
+    {
+        "web_url": "https://www.theguardian.com/global-development/2026/feb/04/death-of-nigerian-singer-highlights-crisis-of-preventable-snakebite-fatalities",
+        "headline": "Death of Nigerian singer highlights crisis of preventable snakebite fatalities",
+    },
+    {
+        "web_url": "https://www.theguardian.com/business/2026/feb/05/shell-increases-multibillion-pound-debt-pile-record-shareholder-payouts-oil-prices",
+        "headline": "Shell increases multibillion-pound debt pile with record shareholder payouts amid oil-price strain",
+    },
+    {
+        "web_url": "https://www.theguardian.com/world/2026/feb/06/japan-cherry-blossom-festival-cancelled-tourists",
+        "headline": "Japan cherry blossom festival cancelled as authorities respond to tourist pressure",
+    },
+]
 
 
 def choose_corpus_id(seed: int) -> str:
@@ -107,6 +123,12 @@ def build_event_query_from_headline(headline: str, max_terms: int = 6) -> str:
     return " ".join(tokens[:max_terms])
 
 
+def append_discovery_log(path: Path, message: str) -> None:
+    stamp = dt.datetime.now().isoformat(timespec="seconds")
+    with path.open("a", encoding="utf-8") as f:
+        f.write(f"[{stamp}] {message}\n")
+
+
 def discover_event_queries(
     *,
     discovery_query: str,
@@ -118,35 +140,71 @@ def discover_event_queries(
     articles_per_set: int,
     num_events: int,
     discovery_max_candidates: int,
+    log_fn: Callable[[str], None] | None = None,
 ) -> tuple[list[str], list[dict]]:
-    seed_articles = fetch_guardian_articles(
-        query=discovery_query,
-        from_date=from_date,
-        to_date=to_date,
-        page_size=page_size,
-        max_pages=max_pages,
-        api_key=api_key,
+    logger = log_fn or (lambda _: None)
+    logger(
+        "discovery_start "
+        f"query='{discovery_query}' from={from_date} to={to_date} "
+        f"page_size={page_size} max_pages={max_pages} min_articles_per_set={articles_per_set} "
+        f"num_events={num_events} max_candidate_queries={discovery_max_candidates}"
     )
+    if discovery_query.strip().lower() == "world":
+        seed_articles = list(HARDCODED_WORLD_DISCOVERY_SEEDS)
+        logger(
+            "seed_source=hardcoded_world_urls "
+            f"count={len(seed_articles)}"
+        )
+        for idx, article in enumerate(seed_articles, start=1):
+            logger(
+                f"seed_article idx={idx} "
+                f"url='{str(article.get('web_url', '')).strip()}' "
+                f"headline='{str(article.get('headline', '')).strip()}'"
+            )
+    else:
+        seed_articles = fetch_guardian_articles(
+            query=discovery_query,
+            from_date=from_date,
+            to_date=to_date,
+            page_size=page_size,
+            max_pages=max_pages,
+            api_key=api_key,
+        )
+        logger("seed_source=guardian_search")
+    logger(f"seed_fetch_complete count={len(seed_articles)}")
     if not seed_articles:
         raise ValueError(f"No discovery seed articles found for query '{discovery_query}'.")
 
     candidate_queries: list[str] = []
     seen: set[str] = set()
-    for article in seed_articles:
+    for article_idx, article in enumerate(seed_articles, start=1):
         headline = str(article.get("headline", "")).strip()
         candidate = build_event_query_from_headline(headline)
-        if not candidate or candidate in seen:
+        if not candidate:
+            logger(f"candidate_skip idx={article_idx} reason=no_tokens headline='{headline[:120]}'")
+            continue
+        if candidate in seen:
+            logger(f"candidate_skip idx={article_idx} reason=duplicate candidate='{candidate}'")
             continue
         seen.add(candidate)
         candidate_queries.append(candidate)
+        logger(
+            f"candidate_add idx={article_idx} candidate='{candidate}' "
+            f"source_headline='{headline[:120]}'"
+        )
         if len(candidate_queries) >= max(1, discovery_max_candidates):
+            logger(f"candidate_cap_reached limit={max(1, discovery_max_candidates)}")
             break
 
     if not candidate_queries:
         raise ValueError("Could not derive any event query candidates from discovery headlines.")
 
+    logger(f"candidate_generation_complete unique_candidates={len(candidate_queries)}")
     scored: list[dict] = []
-    for candidate in candidate_queries:
+    for candidate_idx, candidate in enumerate(candidate_queries, start=1):
+        logger(
+            f"candidate_eval_start idx={candidate_idx}/{len(candidate_queries)} candidate='{candidate}'"
+        )
         candidates = fetch_guardian_articles(
             query=candidate,
             from_date=from_date,
@@ -155,16 +213,32 @@ def discover_event_queries(
             max_pages=max_pages,
             api_key=api_key,
         )
+        num_candidates = len(candidates)
+        is_viable = num_candidates >= articles_per_set
+        logger(
+            f"candidate_eval_done idx={candidate_idx}/{len(candidate_queries)} "
+            f"candidate='{candidate}' num_candidates={num_candidates} "
+            f"viable={str(is_viable).lower()} threshold={articles_per_set}"
+        )
         scored.append(
             {
                 "event_query": candidate,
-                "num_candidates": len(candidates),
+                "num_candidates": num_candidates,
+                "viable": is_viable,
             }
         )
 
     viable = [row for row in scored if int(row["num_candidates"]) >= articles_per_set]
     viable.sort(key=lambda x: int(x["num_candidates"]), reverse=True)
     selected = viable[: max(1, num_events)]
+    logger(
+        f"candidate_selection_summary viable={len(viable)} "
+        f"requested={max(1, num_events)} selected={len(selected)}"
+    )
+    for rank, row in enumerate(selected, start=1):
+        logger(
+            f"selected_event rank={rank} query='{row['event_query']}' num_candidates={int(row['num_candidates'])}"
+        )
     if len(selected) < max(1, num_events):
         raise ValueError(
             f"Only discovered {len(selected)} viable event queries (need {num_events}). "
@@ -194,10 +268,15 @@ def main() -> int:
         return 1
 
     corpus_dir.mkdir(parents=True, exist_ok=True)
+    discovery_log_path = corpus_dir / "discovery.log"
 
     rng = random.Random(args.seed)
     discovery_report: dict = {"used": False}
     if use_discovery:
+        def discovery_log(message: str) -> None:
+            print(message)
+            append_discovery_log(discovery_log_path, message)
+
         print(f"Discovering {args.num_events} event queries from broad query: {args.query}")
         try:
             discovered, scored = discover_event_queries(
@@ -210,11 +289,13 @@ def main() -> int:
                 articles_per_set=args.articles_per_set,
                 num_events=max(1, args.num_events),
                 discovery_max_candidates=max(1, args.discovery_max_candidates),
+                log_fn=discovery_log,
             )
         except Exception as exc:
             print(f"[error] Failed discovering event queries: {exc}", file=sys.stderr)
             return 1
         event_queries = discovered
+        discovery_log(f"discovery_complete selected_event_queries={event_queries}")
         discovery_report = {
             "used": True,
             "discovery_query": args.query,
@@ -235,6 +316,10 @@ def main() -> int:
                 max_pages=args.guardian_max_pages,
                 api_key=guardian_api_key,
             )
+            print(
+                f"query_fetch_complete query='{query}' num_candidates={len(candidates)} "
+                f"required={args.articles_per_set}"
+            )
             if len(candidates) < args.articles_per_set:
                 raise ValueError(
                     f"Only found {len(candidates)} candidate real articles for query '{query}', need {args.articles_per_set}."
@@ -248,6 +333,11 @@ def main() -> int:
     for set_idx, query in enumerate(event_queries):
         picked = rng.sample(all_candidates_by_query[query], args.articles_per_set)
         picked.sort(key=lambda x: str(x.get("published_at", "")))
+        preview_headlines = [str(a.get("headline", ""))[:90] for a in picked[:3]]
+        print(
+            f"set_sampled set_id=real_set_{set_idx:03d} query='{query}' "
+            f"picked={len(picked)} preview_headlines={preview_headlines}"
+        )
         real_event_sets.append(
             {
                 "set_id": f"real_set_{set_idx:03d}",
@@ -295,6 +385,8 @@ def main() -> int:
             "num_real": sum(len(s.get("articles", [])) for s in real_event_sets),
         },
     )
+    # Update latest-corpus pointer so follow-up scripts can run with no args.
+    (Path(args.corpora_dir) / "latest_corpus.txt").write_text(f"{corpus_id}\n", encoding="utf-8")
 
     print(f"Corpus ID: {corpus_id}")
     print(f"Corpus directory: {corpus_dir}")
